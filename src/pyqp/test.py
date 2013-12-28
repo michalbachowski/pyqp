@@ -5,8 +5,7 @@ from .table import Table
 from .mappers import Alias, Direct
 from .reducers import avg, last
 from .aggregate import Accumulative
-from .event_handler import Aggregator
-from .reactors import Local
+from .event_handlers import Aggregate, Process
 from .drawer import TableDrawer
 
 
@@ -20,14 +19,14 @@ qq = Table('query_quality', [
 
 m = Alias(Direct('query_quality', ('query_id',)), {'success': ['success_1h', 'success_1d']})
 
-a = Aggregator()
+a = Process()
 a.add_table(qq, TableDrawer('1.23')).add_mapper('test', m)
 
-r = Local().append(a)
+r = Aggregate().append(a)
 
 
 # test
-r.emit('test', {'query_id': 1, 'last_succeded': 2, 'runtime': 3, 'success': 4})
-r.emit('test', {'query_id': 1, 'last_succeded': 22, 'runtime': 9, 'success': 1})
-r.emit('test', {'query_id': 2, 'last_succeded': 22, 'runtime': 9, 'success': 1})
+r.dispatch('test', {'query_id': 1, 'last_succeded': 2, 'runtime': 3, 'success': 4})
+r.dispatch('test', {'query_id': 1, 'last_succeded': 22, 'runtime': 9, 'success': 1})
+r.dispatch('test', {'query_id': 2, 'last_succeded': 22, 'runtime': 9, 'success': 1})
 r.process()
