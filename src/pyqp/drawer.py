@@ -9,8 +9,7 @@ class TableDrawer(object):
         self._version = version
 
     def __call__(self, table):
-        return "\n".join(chain(self._draw_header(table), \
-                                                        self._draw_rows(table)))
+        print "\n".join(chain(self._draw_header(table), self._draw_rows(table)))
 
     def _draw_header(self, table):
         yield self._version

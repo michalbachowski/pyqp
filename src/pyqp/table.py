@@ -23,12 +23,41 @@ def _create_column(config):
     return Column(config)
 
 
-class Table(object):
+class Abstract(object):
 
     def __init__(self, name, columns):
         self.name = name
         self._columns_conf = columns
         self._columns = list(self._create_columns_list())
+
+    def _create_columns_list(self):
+        return map(_create_column, self._columns_conf)
+
+    def add_value(self, row, column, value):
+        pass
+
+    @property
+    def columns(self):
+        return self._columns
+
+    def __iter__(self):
+        return iter([])
+
+
+class TableForward(Abstract):
+
+    def __init__(self, dbus, name, columns):
+        self._dbus = dbus
+        Abstract.__init__(self, name, columns)
+
+    def add_value(self, row, column, value):
+        self._dbus.send('pyqp_cell_value', (self.name, row, column, value))
+
+
+class Table(Abstract):
+
+    def __init__(self, name, columns):
+        Abstract.__init__(self, name, columns)
         self._rows = defaultdict(self._init_row)
 
     def _init_row(self):
@@ -40,10 +69,6 @@ class Table(object):
     def add_value(self, row, column, value):
         self._rows[row][column].append(value)
         return self
-
-    @property
-    def columns(self):
-        return self._columns
 
     def __iter__(self):
         return iter(self._rows.values())

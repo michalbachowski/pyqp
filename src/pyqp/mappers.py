@@ -33,3 +33,9 @@ class Alias(object):
                 continue
             for alias in self._aliases[row[2]]:
                 yield (row[0], row[1], alias, row[3])
+
+
+class Simple(object):
+
+    def __call__(self, data):
+        yield data
