@@ -11,7 +11,7 @@ def last(values):
 def avg(values):
     return sum(values) / float(len(values))
 
-def nvl(self, values):
+def nvl(values):
     for val in values:
         if val is not None:
             return val

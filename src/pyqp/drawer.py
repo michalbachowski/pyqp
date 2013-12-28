@@ -14,10 +14,9 @@ class TableDrawer(object):
 
     def _draw_header(self, table):
         yield self._version
-        yield ','.join([column.name for column in table.columns.values()])
-        yield ','.join([column.type for column in table.columns.values()])
-        yield ','.join(['"%s"' % column.desc for column in \
-                                                        table.columns.values()])
+        yield ','.join([column.name for column in table.columns])
+        yield ','.join([column.type for column in table.columns])
+        yield ','.join(['"%s"' % column.desc for column in table.columns])
 
     def _draw_rows(self, table):
         for row in table:

@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
 
 from .table import Table
-from .mappers import Direct
+from .mappers import Alias, Direct
 from .reducers import avg, last
 from .aggregate import Accumulative
-from .event_handler import Mapper
+from .event_handler import Aggregator
 from .reactors import Local
+from .drawer import TableDrawer
 
 
 qq = Table('query_quality', [
@@ -18,7 +18,16 @@ qq = Table('query_quality', [
     ('success_1d', sum, Accumulative(1440))
 ])
 
-m = Mapper()
-m.add_table(qq).add_mapper('test', Direct('query_quality'))
+m = Alias(Direct('query_quality', ('query_id',)), {'success': ['success_1h', 'success_1d']})
 
-r = Local().append(m)
+a = Aggregator()
+a.add_table(qq, TableDrawer('1.23')).add_mapper('test', m)
+
+r = Local().append(a)
+
+
+# test
+r.emit('test', {'query_id': 1, 'last_succeded': 2, 'runtime': 3, 'success': 4})
+r.emit('test', {'query_id': 1, 'last_succeded': 22, 'runtime': 9, 'success': 1})
+r.emit('test', {'query_id': 2, 'last_succeded': 22, 'runtime': 9, 'success': 1})
+r.process()

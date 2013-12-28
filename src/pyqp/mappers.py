@@ -28,8 +28,8 @@ class Alias(object):
 
     def __call__(self, data):
         for row in self._decorated(data):
-            yield row
-            if row[1] not in self._aliases:
+            if row[2] not in self._aliases:
+                yield row
                 continue
-            for alias in self._aliases[row[1]]:
+            for alias in self._aliases[row[2]]:
                 yield (row[0], row[1], alias, row[3])

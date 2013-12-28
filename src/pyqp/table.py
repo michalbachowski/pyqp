@@ -5,10 +5,10 @@ from pyqp.aggregate import Accumulative
 from pyqp.reducers import last, nvl
 
 
-def _nvl(self, *args):
+def _nvl(*args):
     return nvl(args)
 
-def _create_column(self, config):
+def _create_column(config):
     # is column config a dict?
     try:
         return Column(**config)
@@ -27,12 +27,15 @@ class Table(object):
 
     def __init__(self, name, columns):
         self.name = name
-        self._columns = columns
+        self._columns_conf = columns
+        self._columns = list(self._create_columns_list())
         self._rows = defaultdict(self._init_row)
 
-    def _init_row(self, key):
-        return OrderedDict((c.name, c) for c in \
-                                            map(_create_column, self._columns))
+    def _init_row(self):
+        return OrderedDict((c.name, c) for c in self._create_columns_list())
+
+    def _create_columns_list(self):
+        return map(_create_column, self._columns_conf)
 
     def add_value(self, row, column, value):
         self._rows[row][column].append(value)
@@ -43,23 +46,25 @@ class Table(object):
         return self._columns
 
     def __iter__(self):
-        return self._rows.values()
+        return iter(self._rows.values())
 
 
 class Column(object):
 
     def __init__(self, name, reducer=None, handler=None, desc=None, type=None, \
-                 start_value=None):
+                 default_value=None):
         self.name = name
         self.desc = _nvl(desc, name)
         self.type = _nvl(type, 'str')
         self.reducer = _nvl(reducer, last)
+        self.default_value = str(_nvl(default_value, 0))
         # using 'if' statement to avoid creating objects if not necessary
         self.handler = (handler if handler is not None else Accumulative(60))()
-        self.start_value = _nvl(start_value, 0)
 
     def __str__(self):
-        return reduce(self.reducer, self.handler, self.start_value)
+        if len(self.handler) == 0:
+            return self.default_value
+        return str(self.reducer(self.handler))
 
     def append(self, value):
         self.handler.append(value)
