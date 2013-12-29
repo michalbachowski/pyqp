@@ -44,7 +44,7 @@ class Abstract(object):
         return iter([])
 
 
-class TableForward(Abstract):
+class TableForwarder(Abstract):
 
     def __init__(self, dbus, name, columns):
         self._dbus = dbus

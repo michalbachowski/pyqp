@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-class Direct(object):
+class DictRow(object):
 
     def __init__(self, table, pk):
         self._table = table
@@ -20,22 +20,62 @@ class Direct(object):
         return frozenset(pk) # to make it hashable
 
 
-class Alias(object):
+class DecoratorAbstract(object):
 
-    def __init__(self, decorated, aliases):
+    def __init__(self, decorated):
         self._decorated = decorated
-        self._aliases = aliases
 
     def __call__(self, data):
         for row in self._decorated(data):
-            if row[2] not in self._aliases:
-                yield row
-                continue
-            for alias in self._aliases[row[2]]:
-                yield (row[0], row[1], alias, row[3])
+            for value in self._map(row):
+                yield value
+
+    def _map(self, value):
+        raise NotImplementedError()
 
 
-class Simple(object):
+class Translate(DecoratorAbstract):
 
-    def __call__(self, data):
-        yield data
+    def __init__(self, decorated, aliases):
+        self._aliases = aliases
+        DecoratorAbstract.__init__(self, decorated)
+
+    def _map(self, row):
+        if row[2] not in self._aliases:
+            yield row
+            return
+        for alias in self._aliases[row[2]]:
+            yield (row[0], row[1], alias, row[3])
+
+
+class Select(DecoratorAbstract):
+
+    def __init__(self, decorated, allowed):
+        self._allowed = allowed
+        DecoratorAbstract.__init__(self, decorated)
+
+    def _map(self, row):
+        if row[2] in self._allowed:
+            yield row
+        return
+
+
+class Exclude(DecoratorAbstract):
+
+    def __init__(self, decorated, excluded):
+        self._excluded = excluded
+        DecoratorAbstract.__init__(self, decorated)
+
+    def _map(self, row):
+        if row[1] in self._excluded:
+            return
+        yield row
+
+
+def single_value(self, data):
+    yield data
+
+
+def values_list(self, data):
+    for value in data:
+        yield value
