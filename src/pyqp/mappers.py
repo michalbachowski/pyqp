@@ -72,10 +72,10 @@ class Exclude(DecoratorAbstract):
         yield row
 
 
-def single_value(self, data):
+def single_value(data):
     yield data
 
 
-def values_list(self, data):
+def values_list(data):
     for value in data:
         yield value

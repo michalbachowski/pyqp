@@ -3,7 +3,7 @@
 
 from .table import Table, TableForwarder
 from .mappers import Translate, DictRow, single_value
-from .reducers import avg, last
+from .reducers import avg
 from .aggregate import Accumulative
 from .event_dispatcher import Dispatcher
 from .drawer import TableDrawer
@@ -25,7 +25,7 @@ tables = [
         'drawer': TableDrawer('1.23'),
         'table': Table('query_quality', [
             'query_id', \
-            ('last_succeded', last), \
+            {'name': 'last_succeded'}, \
             ('runtime', avg), \
             ('success_1h', sum), \
             ('success_1d', sum, Accumulative(1440)),\
@@ -35,13 +35,14 @@ tables = [
 
 
 forwarder_class = partial(TableForwarder, 'some bus instance')
+drawer = TableDrawer(1)
 d = Dispatcher()
 
 for conf in tables:
     t = conf['table']
     if conf['aggregate_on'] != 'machine':
         t = forwarder_class(t.name, t.columns)
-    d.add_table(t, conf['drawer'])
+    d.add_table(t, conf.get('drawer', drawer))
 
 for (event_name, mapper) in mappers:
     d.add_mapper(event_name, mapper)
@@ -50,4 +51,5 @@ for (event_name, mapper) in mappers:
 d.dispatch('test', {'query_id': 1, 'last_succeded': 2, 'runtime': 3, 'success': 4})
 d.dispatch('test', {'query_id': 1, 'last_succeded': 22, 'runtime': 9, 'success': 1})
 d.dispatch('test', {'query_id': 2, 'last_succeded': 22, 'runtime': 9, 'success': 1})
+d.dispatch('pyqp_cell_value', ('query_quality', 2, 'runtime', 1))
 d.process()
