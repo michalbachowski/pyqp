@@ -22,7 +22,7 @@ mappers = [\
 
 tables = [
     {
-        'aggregate_on': 'machine',
+        'aggregate_locally': True,
         'drawer': TableProvDumper('1.23'),
         'table': Table('query_quality', [
             'query_id', \
@@ -40,13 +40,15 @@ tables = [
 # DO NOT EDIT BELOW
 #######
 
+is_leader = True
 forwarder_class = partial(TableForwarder, 'some bus instance')
 drawer = TableProvDumper(1)
 d = Dispatcher()
 
 for conf in tables:
     t = conf['table']
-    if conf['aggregate_on'] != 'machine':
+    # if aggregation should be preformed on leader AND this is not a leader - forward values
+    if not conf.get('aggregate_locally', is_leader):
         t = forwarder_class(t.name, t.columns)
     d.add_table(t, conf.get('drawer', drawer))
 
