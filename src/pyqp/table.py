@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from collections import defaultdict, OrderedDict
-from pyqp.aggregate import Accumulative
+from pyqp.aggregate import Accumulate
 from pyqp.reducers import last, nvl
 
 
@@ -84,7 +84,7 @@ class Column(object):
         self.reducer = _nvl(reducer, last)
         self.default_value = str(_nvl(default_value, 0))
         # using 'if' statement to avoid creating objects if not necessary
-        self.handler = (handler if handler is not None else Accumulative(60))()
+        self.handler = (handler if handler is not None else Accumulate(60))()
 
     def __str__(self):
         if len(self.handler) == 0:

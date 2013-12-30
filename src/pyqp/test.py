@@ -4,7 +4,7 @@
 from .table import Table, TableForwarder
 from .mappers import Translate, DictRow, single_value, values_list
 from .reducers import avg
-from .aggregate import Accumulative
+from .aggregate import Accumulate
 from .event_dispatcher import Dispatcher
 from .dumper import TableProvDumper
 from functools import partial
@@ -29,7 +29,7 @@ tables = [
             {'name': 'last_succeded'}, \
             ('runtime', avg), \
             ('success_1h', sum), \
-            ('success_1d', sum, Accumulative(1440)),\
+            ('success_1d', sum, Accumulate(1440)),\
         ])
     }
 ]

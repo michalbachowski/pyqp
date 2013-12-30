@@ -12,10 +12,10 @@ class Abstract(object):
         raise NotImplementedError("Implement")
 
 
-class Accumulative(deque, Abstract):
+class Accumulate(deque, Abstract):
 
     def __init__(self, size):
         deque.__init__(self, [], size)
 
     def __call__(self):
-        return Accumulative(self.maxlen)
+        return Accumulate(self.maxlen)
