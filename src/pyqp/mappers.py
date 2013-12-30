@@ -73,9 +73,9 @@ class Exclude(DecoratorAbstract):
 
 
 def single_value(data):
-    yield data
+    yield (data[0], frozenset(data[1]), data[2], data[3])
 
 
 def values_list(data):
     for value in data:
-        yield value
+        yield (value[0], frozenset(value[1]), value[2], value[3])

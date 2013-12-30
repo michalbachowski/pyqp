@@ -3,7 +3,7 @@
 from itertools import chain
 
 
-class TableDrawer(object):
+class TableProvDumper(object):
 
     def __init__(self, version):
         self._version = version
