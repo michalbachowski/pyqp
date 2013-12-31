@@ -9,18 +9,36 @@ def _nvl(*args):
     return nvl(args)
 
 def _create_column(config):
+    # so maybe config is valid Column instance?
+    try:
+        config.name
+        config.desc
+    except AttributeError:
+        pass
+    else:
+        return config
+
     # is column config a dict?
     try:
         return Column(**config)
     except TypeError:
         pass
+
     # is column config a tuple?
     try:
         return Column(*config)
     except TypeError:
         pass
-    # it has to be string... otherwise I give up :(
-    return Column(config)
+
+    # is column config a string?
+    try:
+        return Column(config)
+    except TypeError:
+        pass
+
+    # I give up...
+    raise ValueError("Expected valid column configuration or instance, got %s" \
+                                                                    % config)
 
 
 class Abstract(object):

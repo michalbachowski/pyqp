@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from .table import Table, TableForwarder
+from .table import Table, TableForwarder, Column
 from .mappers import Translate, DictRow, single_value, values_list
 from .reducers import avg
 from .aggregate import Accumulate
@@ -28,7 +28,7 @@ tables = [
             'query_id', \
             {'name': 'last_succeded'}, \
             ('runtime', avg), \
-            ('success_1h', sum), \
+            Column('success_1h', sum), \
             ('success_1d', sum, Accumulate(1440)),\
         ])
     }
