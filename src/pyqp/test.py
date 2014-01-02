@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from .column import Column
-from .configurators import dict_config_factory, list_config_reader, \
+from .configurators import simple_dict_factory, list_of_dicts_to_list_of_tuples,\
                     AggregateFilter, DbusForwardable, SetDefaultDrawer
 from .table import Table
 from .mappers import Translate, DictRow, single_value, values_list
@@ -45,13 +45,14 @@ tables = [
 is_leader = True
 
 config_filters = AggregateFilter() \
+    .append(simple_dict_factory) \
     .append(DbusForwardable(is_leader, 'dbus instance')) \
     .append(SetDefaultDrawer(TableProvDumper(1)))
 
 d = Dispatcher()
 
-for (table, drawer, config) in config_filters(dict_config_factory(\
-                                                list_config_reader(tables))):
+for (table, drawer, config) in map(lambda x: config_filters(*x), \
+                                    list_of_dicts_to_list_of_tuples(tables)):
     d.add_table(table, drawer)
 
 

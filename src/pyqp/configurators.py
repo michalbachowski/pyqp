@@ -4,54 +4,55 @@ from functools import partial
 from .table import TableForwarder
 
 
-def list_config_reader(iterable):
+def list_of_dicts_to_list_of_tuples(iterable):
     for config in iterable:
         yield (None, None, config)
 
 
-def dict_config_factory(iterable):
-    for (table, drawer, config) in iterable:
-        yield (config.get('table'), config.get('drawer'), config)
+def simple_dict_factory(table, drawer, config):
+    return (config.get('table'), config.get('drawer'), config)
 
 
 class Filter(object):
 
     def __call__(self, table, drawer, config):
-        raise NotImplementedError()
+        return (table, drawer, config)
 
 
 class AggregateFilter(Filter):
 
     def __init__(self):
-        self._configurators = []
+        self._filters = []
 
-    def __call__(self, iterable):
-        for (table, drawer, config) in iterable:
-            for configurator in self._configurators:
-                (table, drawer, config) = configurator(table, drawer, config)
-            yield (table, drawer, config)
+    def __call__(self, table, drawer, config):
+        for filter in self._filters:
+            (table, drawer, config) = filter(table, drawer, config)
+        return (table, drawer, config)
 
-    def append(self, configurator):
-        self._configurators.append(configurator)
+    def append(self, filter):
+        self._filters.append(filter)
         return self
 
 
 class MakeTableForwardable(Filter):
 
-    def __init__(self, do_filter, forwarder_factory):
-        self._do_filter = do_filter
+    def __init__(self, allow_forwarding, forwarder_factory):
+        self._allow_forwarding = allow_forwarding
         self._forwarder_factory = forwarder_factory
 
     def __call__(self, table, drawer, config):
-        if not config.get('aggregate_locally', self._do_filter):
+        if self._is_forwardable(config):
             table = self._forwarder_factory(table.name, table.columns)
         return (table, drawer, config)
+
+    def _is_forwardable(self, config):
+        return not config.get('aggregate_locally', self._allow_forwarding)
 
 
 class DbusForwardable(MakeTableForwardable):
 
-    def __init__(self, do_filter, dbus):
-        MakeTableForwardable.__init__(self, do_filter, \
+    def __init__(self, allow_forwarding, dbus):
+        MakeTableForwardable.__init__(self, allow_forwarding, \
                                                 partial(TableForwarder, dbus))
 
 
