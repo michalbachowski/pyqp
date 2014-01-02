@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from .table import Table, TableForwarder, Column
+from .column import Column
+from .table import Table, TableForwarder
 from .mappers import Translate, DictRow, single_value, values_list
 from .reducers import avg
 from .aggregate import Accumulate
