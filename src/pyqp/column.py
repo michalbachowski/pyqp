@@ -14,6 +14,10 @@ def column_factory(config):
     try:
         config.name
         config.desc
+        config.type
+        config.append
+        config.__copy__
+        config.__str__
     except AttributeError:
         pass
     else:
