@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from collections import defaultdict, OrderedDict
-from .column import column_factory as default_column_factory
+from pyqp.column import column_factory as default_column_factory
 
 
 class Abstract(object):

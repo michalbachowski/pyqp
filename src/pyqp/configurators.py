@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from functools import partial
-from .table import TableForwarder
+from pyqp.table import TableForwarder
 
 
 def list_of_dicts_to_list_of_tuples(iterable):
