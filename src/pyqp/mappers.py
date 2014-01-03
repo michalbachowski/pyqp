@@ -20,6 +20,15 @@ class DictRow(object):
         return frozenset(pk) # to make it hashable
 
 
+def single_value(data):
+    yield (data[0], frozenset(data[1]), data[2], data[3])
+
+
+def values_list(data):
+    for value in data:
+        yield (value[0], frozenset(value[1]), value[2], value[3])
+
+
 class DecoratorAbstract(object):
 
     def __init__(self, decorated):
@@ -70,12 +79,3 @@ class Exclude(DecoratorAbstract):
         if row[1] in self._excluded:
             return
         yield row
-
-
-def single_value(data):
-    yield (data[0], frozenset(data[1]), data[2], data[3])
-
-
-def values_list(data):
-    for value in data:
-        yield (value[0], frozenset(value[1]), value[2], value[3])
