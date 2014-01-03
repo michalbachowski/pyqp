@@ -14,7 +14,7 @@ def column_factory(config):
     try:
         config.name
         config.desc
-        config.type
+        config.type_name
         config.append
         config.__copy__
         config.__str__
@@ -48,10 +48,10 @@ def column_factory(config):
 
 class Abstract(object):
 
-    def __init__(self, name, desc, type, *args, **kwargs):
+    def __init__(self, name, desc, type_name, *args, **kwargs):
         self._name = name
         self._desc = desc
-        self._type = type
+        self._type_name = type_name
 
     @property
     def name(self):
@@ -62,8 +62,8 @@ class Abstract(object):
         return self._desc
 
     @property
-    def type(self):
-        return self._type
+    def type_name(self):
+        return self._type_name
 
     def append(self, value):
         raise NotImplementedError()
@@ -78,8 +78,8 @@ class Abstract(object):
 class Column(Abstract):
 
     def __init__(self, name, reducer=None, handler_factory=None, desc=None, \
-                                                type=None, default_value=None):
-        Abstract.__init__(self, name, _nvl(desc, name), _nvl(type, 'str'))
+                                            type_name=None, default_value=None):
+        Abstract.__init__(self, name, _nvl(desc, name), _nvl(type_name, 'str'))
         self._reducer = _nvl(reducer, last)
         self._default_value = str(_nvl(default_value, 0))
         self._handler_factory = _nvl(handler_factory, Accumulate(60))
@@ -87,7 +87,7 @@ class Column(Abstract):
 
     def __copy__(self):
         return Column(self.name, self._reducer, self._handler_factory, \
-                    self.desc, self.type, self._default_value)
+                    self.desc, self.type_name, self._default_value)
 
     def __str__(self):
         if len(self._handler) == 0:
