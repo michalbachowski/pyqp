@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import division
+
 
 # in python there are built in: sum, min and max
 # from Python 3.4 "statistics" module is available adding median and other statistic functions: http://docs.python.org/3self.4/library/statistics.html
@@ -8,10 +10,6 @@ def last(values):
     for last in values:
         pass
     return last
-
-
-def avg(values):
-    return sum(values) / float(len(values))
 
 
 def nvl(values):
@@ -36,4 +34,19 @@ class Percentile(object):
         return sorts[int_key-1]
 
 
-median = Percentile(0.5)
+# from Python 3.4 "statistics" module is available adding median, mean, mode
+# and other statistic functions, see:
+# http://docs.python.org/3self.4/library/statistics.html
+try:
+    from statistics import median, mean, mode
+except ImportError:
+
+    median = Percentile(0.5)
+
+
+    def mean(values):
+        return sum(values) / len(values)
+
+
+    def mode(values):
+        return max(set(values), key=values.count)

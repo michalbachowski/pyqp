@@ -6,7 +6,7 @@ from .configurators import simple_dict_factory, list_of_dicts_to_list_of_tuples,
                     AggregateFilter, DbusForwardable, SetDefaultDrawer
 from .table import Table
 from .mappers import Translate, DictRow, single_value, values_list
-from .reducers import avg
+from .reducers import mean
 from .aggregate import Accumulate
 from .event_dispatcher import Dispatcher
 from .dumper import TableProvDumper
@@ -29,7 +29,7 @@ tables = [
         'table': Table('query_quality', [
             'query_id', \
             {'name': 'last_succeded'}, \
-            ('runtime', avg), \
+            ('runtime', mean), \
             Column('success_1h', sum), \
             ('success_1d', sum, Accumulate(1440)),\
         ])
