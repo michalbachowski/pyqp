@@ -9,7 +9,7 @@ from .mappers import Translate, DictRow, single_value, values_list
 from .reducers import mean
 from .aggregate import Accumulate
 from .event_dispatcher import Dispatcher
-from .dumper import TableProvDumper, StdOutDumper
+from .dumper import VersionedCsvDumper, StdOutDumper
 
 mappers = [\
     ('test',
@@ -25,7 +25,7 @@ mappers = [\
 tables = [
     {
         'aggregate_locally': True,
-        'drawer': StdOutDumper(TableProvDumper('1.23')),
+        'drawer': StdOutDumper(VersionedCsvDumper('1.23')),
         'table': Table('query_quality', [
             'query_id', \
             {'name': 'last_succeded'}, \
@@ -47,7 +47,7 @@ is_leader = True
 config_filters = AggregateFilter() \
     .append(simple_dict_factory) \
     .append(DbusForwardable(is_leader, 'proxy instance')) \
-    .append(SetDefaultDrawer(TableProvDumper(1)))
+    .append(SetDefaultDrawer(VersionedCsvDumper(1)))
 
 d = Dispatcher()
 

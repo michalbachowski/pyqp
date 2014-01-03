@@ -19,7 +19,7 @@ class CsvDumper(object):
             yield ','.join(map(str, row.values()))
 
 
-class TableProvDumper(CsvDumper):
+class VersionedCsvDumper(CsvDumper):
 
     def __init__(self, version):
         self._version = version
