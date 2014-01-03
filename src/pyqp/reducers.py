@@ -4,7 +4,6 @@ from __future__ import division
 
 
 # in python there are built in: sum, min and max
-# from Python 3.4 "statistics" module is available adding median and other statistic functions: http://docs.python.org/3self.4/library/statistics.html
 
 def last(values):
     for last in values:
