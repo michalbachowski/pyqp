@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import division
+import math
 
 
 # in python there are built in: sum, min and max
@@ -25,12 +26,14 @@ class Percentile(object):
 
     def __call__(self, values):
         sorts = sorted(values)
-        length = len(values)
-        key = length * self._percentile
-        int_key = int(key)
-        if int_key != key:
-            return (sorts[int_key-1] + sorts[int_key]) / 2.0
-        return sorts[int_key-1]
+        key = (len(values)-1) * self._percentile
+        key_floor = math.floor(key)
+        key_ceil = math.ceil(key)
+        if key_ceil == key_floor:
+            return sorts[int(key)]
+        d0 = sorts[int(key_floor)] * (key_ceil - key)
+        d1 = sorts[int(key_ceil)] * (key - key_floor)
+        return d0+d1
 
 
 # from Python 3.4 "statistics" module is available adding median, mean, mode
