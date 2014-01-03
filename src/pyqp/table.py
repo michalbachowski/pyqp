@@ -27,12 +27,12 @@ class Abstract(object):
 
 class TableForwarder(Abstract):
 
-    def __init__(self, dbus, name, columns):
-        self._dbus = dbus
+    def __init__(self, proxy, name, columns):
+        self._proxy = proxy
         Abstract.__init__(self, name, columns)
 
     def add_value(self, row, column, value):
-        self._dbus.send('pyqp_cell_value', (self.name, row, column, value))
+        self._proxy.send('pyqp_cell_value', (self.name, row, column, value))
 
 
 class Table(Abstract):

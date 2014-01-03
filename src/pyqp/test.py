@@ -46,7 +46,7 @@ is_leader = True
 
 config_filters = AggregateFilter() \
     .append(simple_dict_factory) \
-    .append(DbusForwardable(is_leader, 'dbus instance')) \
+    .append(DbusForwardable(is_leader, 'proxy instance')) \
     .append(SetDefaultDrawer(TableProvDumper(1)))
 
 d = Dispatcher()
