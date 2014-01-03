@@ -9,7 +9,7 @@ from .mappers import Translate, DictRow, single_value, values_list
 from .reducers import mean
 from .aggregate import Accumulate
 from .event_dispatcher import Dispatcher
-from .dumper import TableProvDumper
+from .dumper import TableProvDumper, StdOutDumper
 
 mappers = [\
     ('test',
@@ -25,7 +25,7 @@ mappers = [\
 tables = [
     {
         'aggregate_locally': True,
-        'drawer': TableProvDumper('1.23'),
+        'drawer': StdOutDumper(TableProvDumper('1.23')),
         'table': Table('query_quality', [
             'query_id', \
             {'name': 'last_succeded'}, \
