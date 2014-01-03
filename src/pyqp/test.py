@@ -50,7 +50,7 @@ is_leader = True
 config_filters = AggregateFilter() \
     .append(simple_dict_factory) \
     .append(DbusForwardable(is_leader, 'proxy instance')) \
-    .append(SetDefaultDrawer(VersionedCsvDumper(1)))
+    .append(SetDefaultDrawer(StdOutDumper(VersionedCsvDumper(1))))
 
 d = Dispatcher()
 
