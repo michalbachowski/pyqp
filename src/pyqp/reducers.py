@@ -7,9 +7,7 @@ import math
 # in python there are built in: sum, min and max
 
 def last(values):
-    for last in values:
-        pass
-    return last
+    return values[-1]
 
 
 def nvl(values):
