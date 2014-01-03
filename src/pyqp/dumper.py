@@ -4,16 +4,12 @@ import sys
 from itertools import chain
 
 
-class TableProvDumper(object):
-
-    def __init__(self, version):
-        self._version = version
+class CsvDumper(object):
 
     def __call__(self, table):
         return "\n".join(chain(self._draw_header(table), self._draw_rows(table)))
 
     def _draw_header(self, table):
-        yield self._version
         yield ','.join([column.name for column in table.columns])
         yield ','.join([column.type_name for column in table.columns])
         yield ','.join(['"%s"' % column.desc for column in table.columns])
@@ -21,6 +17,15 @@ class TableProvDumper(object):
     def _draw_rows(self, table):
         for row in table:
             yield ','.join(map(str, row.values()))
+
+
+class TableProvDumper(CsvDumper):
+
+    def __init__(self, version):
+        self._version = version
+
+    def __call__(self, table):
+        return str(self._version) + "\n" + CsvDumper.__call__(self, table)
 
 
 class FileDumper(object):
