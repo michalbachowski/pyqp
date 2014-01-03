@@ -5,7 +5,7 @@ from .column import Column
 from .configurators import simple_dict_factory, list_of_dicts_to_list_of_tuples,\
                     AggregateFilter, DbusForwardable, SetDefaultDrawer
 from .table import Table
-from .mappers import Translate, DictRow, single_value, values_list
+from .mappers import Alias, Exclude, DictRow, single_value, values_list
 from .reducers import mean
 from .aggregate import Accumulate
 from .event_dispatcher import Dispatcher
@@ -13,9 +13,12 @@ from .dumper import VersionedCsvDumper, StdOutDumper
 
 mappers = [\
     ('test',
-        Translate(
-            DictRow('query_quality', ('query_id',)),
-            {'success': ['success_1h', 'success_1d']}
+        Exclude(
+            Alias(
+                DictRow('query_quality', ('query_id',)),
+                {'success': ['success_1h', 'success_1d']}
+            ),
+            ['success']
         )
     ),
     ('pyqp_cell_value', single_value),\

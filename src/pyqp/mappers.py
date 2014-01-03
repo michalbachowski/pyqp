@@ -43,15 +43,15 @@ class DecoratorAbstract(object):
         raise NotImplementedError()
 
 
-class Translate(DecoratorAbstract):
+class Alias(DecoratorAbstract):
 
     def __init__(self, decorated, aliases):
         self._aliases = aliases
         DecoratorAbstract.__init__(self, decorated)
 
     def _map(self, row):
+        yield row
         if row[2] not in self._aliases:
-            yield row
             return
         for alias in self._aliases[row[2]]:
             yield (row[0], row[1], alias, row[3])
@@ -76,6 +76,6 @@ class Exclude(DecoratorAbstract):
         DecoratorAbstract.__init__(self, decorated)
 
     def _map(self, row):
-        if row[1] in self._excluded:
+        if row[2] in self._excluded:
             return
         yield row
