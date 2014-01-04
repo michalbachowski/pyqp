@@ -1,81 +1,48 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from operator import itemgetter
 
 
-class DictRow(object):
-
-    def __init__(self, table, pk):
-        self._table = table
-        self._pk = frozenset(pk)
-
-    def __call__(self, data):
-        pk = self._compute_pk(data)
+def dict_row(table, primary_key_columns):
+    _pk = itemgetter(*primary_key_columns)
+    def _map(data):
+        pk = _pk(data)
         for (column, value) in data.items():
-            yield (self._table, pk, column, value)
-
-    def _compute_pk(self, data):
-        pk = []
-        for column in self._pk:
-            pk.append(data[column])
-        return frozenset(pk) # to make it hashable
+            yield (table, pk, column, value)
+    return _map
 
 
 def single_value(data):
-    yield (data[0], frozenset(data[1]), data[2], data[3])
+    yield (data[0], data[1], data[2], data[3])
 
 
 def values_list(data):
     for value in data:
-        yield (value[0], frozenset(value[1]), value[2], value[3])
+        yield (value[0], value[1], value[2], value[3])
 
 
-class DecoratorAbstract(object):
-
-    def __init__(self, decorated):
-        self._decorated = decorated
-
-    def __call__(self, data):
-        for row in self._decorated(data):
-            for value in self._map(row):
-                yield value
-
-    def _map(self, value):
-        raise NotImplementedError()
-
-
-class Alias(DecoratorAbstract):
-
-    def __init__(self, decorated, aliases):
-        self._aliases = aliases
-        DecoratorAbstract.__init__(self, decorated)
-
-    def _map(self, row):
-        yield row
-        if row[2] not in self._aliases:
-            return
-        for alias in self._aliases[row[2]]:
-            yield (row[0], row[1], alias, row[3])
-
-
-class Select(DecoratorAbstract):
-
-    def __init__(self, decorated, allowed):
-        self._allowed = allowed
-        DecoratorAbstract.__init__(self, decorated)
-
-    def _map(self, row):
-        if row[2] in self._allowed:
+def alias(decorated, aliases):
+    def _map(iterable):
+        for row in decorated(iterable):
             yield row
-        return
+            if row[2] not in aliases:
+                return
+            for alias in aliases[row[2]]:
+                yield (row[0], row[1], alias, row[3])
+    return _map
 
 
-class Exclude(DecoratorAbstract):
+def select(decorated, allowed):
+    def _map(iterable):
+        for row in decorated(iterable):
+            if row[2] in allowed:
+                yield row
+    return _map
 
-    def __init__(self, decorated, excluded):
-        self._excluded = excluded
-        DecoratorAbstract.__init__(self, decorated)
 
-    def _map(self, row):
-        if row[2] in self._excluded:
-            return
-        yield row
+def exclude(decorated, excluded):
+    def _map(iterable):
+        for row in decorated(iterable):
+            if row[2] not in excluded:
+                yield row
+    return _map

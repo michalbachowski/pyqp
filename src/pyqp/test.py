@@ -5,7 +5,7 @@ from .column import Column
 from .configurators import simple_dict_factory, list_of_dicts_to_list_of_tuples,\
                     AggregateFilter, DbusForwardable, SetDefaultDrawer
 from .table import Table
-from .mappers import Alias, Exclude, DictRow, single_value, values_list
+from .mappers import alias, exclude, dict_row, single_value, values_list
 from .reducers import mean
 from .aggregate import Accumulate
 from .event_dispatcher import Dispatcher
@@ -13,9 +13,9 @@ from .dumper import VersionedCsvDumper, StdOutDumper
 
 mappers = [\
     ('test',
-        Exclude(
-            Alias(
-                DictRow('query_quality', ('query_id',)),
+        exclude(
+            alias(
+                dict_row('query_quality', ('query_id',)),
                 {'success': ['success_1h', 'success_1d']}
             ),
             ['success']
@@ -68,6 +68,6 @@ for (event_name, mapper) in mappers:
 d.dispatch('test', {'query_id': 1, 'last_succeded': 2, 'runtime': 3, 'success': 4})
 d.dispatch('test', {'query_id': 1, 'last_succeded': 22, 'runtime': 9, 'success': 1})
 d.dispatch('test', {'query_id': 2, 'last_succeded': 44, 'runtime': 9, 'success': 1})
-d.dispatch('pyqp_cell_value', ('query_quality', [2], 'runtime', 1))
-d.dispatch('pyqp_cell_list', [('query_quality', [1], 'runtime', 4)])
+d.dispatch('pyqp_cell_value', ('query_quality', 2, 'runtime', 1))
+d.dispatch('pyqp_cell_list', [('query_quality', 1, 'runtime', 4)])
 d.process()
