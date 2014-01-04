@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from functools import partial
 from .column import Column
 from .configurators import simple_dict_factory, list_of_dicts_to_list_of_tuples,\
                     aggregate_filter, dbus_forwardable, set_default_drawer
@@ -34,7 +35,7 @@ tables = [
             {'name': 'last_succeded'}, \
             ('runtime', mean), \
             Column('success_1h', sum), \
-            ('success_1d', sum, Accumulate(1440)),\
+            ('success_1d', sum, partial(Accumulate, 1440)),\
         ])
     }
 ]

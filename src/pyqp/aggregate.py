@@ -13,17 +13,11 @@ class Abstract(object):
     def __iter__(self):
         raise NotImplementedError("Implement")
 
-    def __call__(self):
-        raise NotImplementedError("Implement")
 
-
-class Accumulate(deque, Abstract):
+class Accumulate(deque):
 
     def __init__(self, size):
         deque.__init__(self, [], size)
-
-    def __call__(self):
-        return Accumulate(self.maxlen)
 
 
 class TimeLimit(Abstract):
@@ -35,9 +29,6 @@ class TimeLimit(Abstract):
 
     def append(self, value):
         self._deque.append((time(), value))
-
-    def __call__(self):
-        return TimeLimit(self._timeout)
 
     def __iter__(self):
         treshold = time() - self._timeout
@@ -51,9 +42,6 @@ class Resettable(Abstract):
     def __init__(self, check_func):
         self._should_be_reset = check_func
         self._list = []
-
-    def __call__(self):
-        return Resettable(self._shoudl_be_reset)
 
     def __iter__(self):
         if self._should_be_reset(self):
