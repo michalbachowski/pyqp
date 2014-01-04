@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from functools import partial
+from functools import partial, wraps
 from pyqp.table import TableForwarder
 
 
@@ -13,55 +13,33 @@ def simple_dict_factory(table, drawer, config):
     return (config.get('table'), config.get('drawer'), config)
 
 
-class Filter(object):
-
-    def __call__(self, table, drawer, config):
+def aggregate_filter(*filters):
+    @wraps(aggregate_filter)
+    def _filter(table, drawer, config):
+        for f in filters:
+            (table, drawer, config) = f(table, drawer, config)
         return (table, drawer, config)
+    return _filter
 
 
-class AggregateFilter(Filter):
-
-    def __init__(self):
-        self._filters = []
-
-    def __call__(self, table, drawer, config):
-        for filter in self._filters:
-            (table, drawer, config) = filter(table, drawer, config)
+def make_table_forwardable(allow_forwarding, forwarder_factory):
+    @wraps(make_table_forwardable)
+    def _filter(table, drawer, config):
+        if not config.get('aggregate_locally', allow_forwarding):
+            table = forwarder_factory(table.name, table.columns)
         return (table, drawer, config)
-
-    def append(self, filter):
-        self._filters.append(filter)
-        return self
+    return _filter
 
 
-class MakeTableForwardable(Filter):
-
-    def __init__(self, allow_forwarding, forwarder_factory):
-        self._allow_forwarding = allow_forwarding
-        self._forwarder_factory = forwarder_factory
-
-    def __call__(self, table, drawer, config):
-        if self._is_forwardable(config):
-            table = self._forwarder_factory(table.name, table.columns)
-        return (table, drawer, config)
-
-    def _is_forwardable(self, config):
-        return not config.get('aggregate_locally', self._allow_forwarding)
-
-
-class DbusForwardable(MakeTableForwardable):
-
-    def __init__(self, allow_forwarding, dbus):
-        MakeTableForwardable.__init__(self, allow_forwarding, \
+def dbus_forwardable(allow_forwarding, dbus):
+    return make_table_forwardable(allow_forwarding, \
                                                 partial(TableForwarder, dbus))
 
 
-class SetDefaultDrawer(Filter):
-
-    def __init__(self, drawer):
-        self._drawer = drawer
-
-    def __call__(self, table, drawer, config):
-        if drawer is None:
-            drawer = self._drawer
-        return (table, drawer, config)
+def set_default_drawer(drawer):
+    @wraps(set_default_drawer)
+    def _filter(table, _drawer, config):
+        if _drawer is None:
+            _drawer = drawer
+        return (table, _drawer, config)
+    return _filter

@@ -3,7 +3,7 @@
 
 from .column import Column
 from .configurators import simple_dict_factory, list_of_dicts_to_list_of_tuples,\
-                    AggregateFilter, DbusForwardable, SetDefaultDrawer
+                    aggregate_filter, dbus_forwardable, set_default_drawer
 from .table import Table
 from .mappers import alias, exclude, dict_row, single_value, values_list
 from .reducers import mean
@@ -47,10 +47,9 @@ tables = [
 
 is_leader = True
 
-config_filters = AggregateFilter() \
-    .append(simple_dict_factory) \
-    .append(DbusForwardable(is_leader, 'proxy instance')) \
-    .append(SetDefaultDrawer(StdOutDumper(VersionedCsvDumper(1))))
+config_filters = aggregate_filter(simple_dict_factory, \
+        dbus_forwardable(is_leader, 'proxy_instance'), \
+        set_default_drawer(StdOutDumper(VersionedCsvDumper(1))))
 
 d = Dispatcher()
 
