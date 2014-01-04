@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from operator import itemgetter
+from functools import wraps
 
 
 def dict_row(table, primary_key_columns):
     _pk = itemgetter(*primary_key_columns)
+    @wraps(dict_row)
     def _map(data):
         pk = _pk(data)
         for (column, value) in data.items():
@@ -22,6 +24,7 @@ def values_list(data):
 
 
 def alias(decorated, aliases):
+    @wraps(alias)
     def _map(iterable):
         for row in decorated(iterable):
             yield row
@@ -33,6 +36,7 @@ def alias(decorated, aliases):
 
 
 def select(decorated, allowed):
+    @wraps(select)
     def _map(iterable):
         for row in decorated(iterable):
             if row[2] in allowed:
@@ -41,6 +45,7 @@ def select(decorated, allowed):
 
 
 def exclude(decorated, excluded):
+    @wraps(exclude)
     def _map(iterable):
         for row in decorated(iterable):
             if row[2] not in excluded:
