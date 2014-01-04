@@ -29,7 +29,7 @@ def alias(decorated, aliases):
         for row in decorated(iterable):
             yield row
             if row[2] not in aliases:
-                return
+                continue
             for alias in aliases[row[2]]:
                 yield (row[0], row[1], alias, row[3])
     return _map
