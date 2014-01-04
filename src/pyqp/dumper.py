@@ -1,53 +1,40 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sys
+from functools import wraps
 from itertools import chain
 
 
-class CsvDumper(object):
-
-    def __call__(self, table):
-        return "\n".join(chain(self._draw_header(table), self._draw_rows(table)))
-
-    def _draw_header(self, table):
-        yield ','.join([column.name for column in table.columns])
-        yield ','.join([column.type_name for column in table.columns])
-        yield ','.join(['"%s"' % column.desc for column in table.columns])
-
-    def _draw_rows(self, table):
-        for row in table:
-            yield ','.join(map(str, row.values()))
+def csv_dumper(table):
+    return "\n".join(chain([\
+        ','.join([column.name for column in table.columns]),\
+        ','.join([column.type_name for column in table.columns]),\
+        ','.join(['"%s"' % column.desc for column in table.columns])],\
+        [','.join(map(str, row.values())) for row in table]))
 
 
-class VersionedCsvDumper(CsvDumper):
+def prefix_dumper(base_dumper, prefix):
+    p = str(prefix)
+    @wraps(prefix_dumper)
+    def _dumper(table):
+        return p + "\n" + base_dumper(table)
+    return _dumper
 
-    def __init__(self, version):
-        self._version = version
 
-    def __call__(self, table):
-        return str(self._version) + "\n" + CsvDumper.__call__(self, table)
-
-
-class FileDumper(object):
-
-    def __init__(self, base_dumper, file_name):
-        self._base_dumper = base_dumper
-        self._file_name = file_name
-
-    def __call__(self, table):
-        with open(self._file_name, 'w') as f:
-            return self._dump(f, table)
-
-    def _dump(self, file_handler, table):
-        data = self._base_dumper(table)
-        file_handler.write(data)
+def file_dumper(base_dumper, file_name):
+    @wraps(file_dumper)
+    def _dumper(table):
+        with open(file_name, 'w') as f:
+            data = base_dumper(table)
+            f.write(data)
         return data
+    return _dumper
 
 
-class StdOutDumper(FileDumper):
-
-    def __init__(self, base_dumper):
-        FileDumper.__init__(self, base_dumper, None)
-
-    def __call__(self, table):
-        return self._dump(sys.stdout, table)
+def stdout_dumper(base_dumper):
+    @wraps(stdout_dumper)
+    def _dumper(table):
+        data = base_dumper(table)
+        sys.stdout.write(data)
+        return data
+    return _dumper
