@@ -6,11 +6,11 @@ from pyqp.column import column_factory as default_column_factory
 
 class Abstract(object):
 
-    def __init__(self, name, columns, column_factory=None, *args, **kwargs):
+    def __init__(self, name, columns, column_factory=default_column_factory, \
+                                                            *args, **kwargs):
         self.name = name
         self._columns_conf = columns
-        self._column_factory = column_factory if column_factory is not None \
-                                                    else default_column_factory
+        self._column_factory = column_factory
         self._columns = list(self._create_columns_list())
 
     def _create_columns_list(self):
