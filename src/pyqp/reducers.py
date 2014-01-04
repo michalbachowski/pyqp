@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import division
+from functools import wraps
 import math
 
 
@@ -45,55 +46,33 @@ def nvl(values):
     raise ValueError('Not None value not found')
 
 
-class Percentile(object):
-    """Calculates requested percentile value for given list of values
+def percentile(percent):
+    """Find the percentile of a list of values.
 
-    >>> Percentile(0.25)([1,2,3,4])
+    >>> percentile(1)    #doctest: +ELLIPSIS
+    <function percentile at 0x...>
+
+    >>> percentile()
+    Traceback (most recent call last):
+    ...
+    TypeError: percentile() takes exactly 1 argument (0 given)
+
+    >>> percentile(0.25)([1,2,3,4])
     1.75
 
-    >>> Percentile(0.25)([1,2,3,4,5])
+    >>> percentile(0.25)([1,2,3,4,5])
     2
 
-    >>> Percentile(0.5)([1,2,3])
+    >>> percentile(0.5)([1,2,3])
     2
 
-    >>> Percentile(0.5)([1,2,3,4])
+    >>> percentile(0.5)([1,2,3,4])
     2.5
     """
-
-    def __init__(self, percentile):
-        """Object initialization
-
-        >>> Percentile(1)    #doctest: +ELLIPSIS
-        <reducers.Percentile object at 0x...>
-
-        >>> Percentile()
-        Traceback (most recent call last):
-        ...
-        TypeError: __init__() takes exactly 2 arguments (1 given)
-        """
-        self._percentile = percentile
-
-    def __call__(self, values):
-        """Find the percentile of a list of values.
-
-        @param    values -- a list of values. Would be sorted internally
-        @type     values -- list
-        @return   float  -- the percentile of the values
-
-        >>> Percentile(0.25)([1,2,3,4,5])
-        2
-
-        >>> Percentile(0.5)([1, 2, 3])
-        2
-
-        >>> Percentile(0.75)()
-        Traceback (most recent call last):
-        ...
-        TypeError: __call__() takes exactly 2 arguments (1 given)
-        """
-        sorts = sorted(values)
-        key = (len(values)-1) * self._percentile
+    @wraps(percentile)
+    def _reduce(iterable):
+        sorts = sorted(iterable)
+        key = (len(iterable)-1) * percent
         key_floor = math.floor(key)
         key_ceil = math.ceil(key)
         if key_ceil == key_floor:
@@ -101,6 +80,7 @@ class Percentile(object):
         d0 = sorts[int(key_floor)] * (key_ceil - key)
         d1 = sorts[int(key_ceil)] * (key - key_floor)
         return d0+d1
+    return _reduce
 
 
 # from Python 3.4 "statistics" module is available adding median, mean, mode
@@ -110,7 +90,7 @@ try:
     from statistics import median, mean, mode
 except ImportError:
 
-    median = Percentile(0.5)
+    median = percentile(0.5)
 
 
     def mean(values):
