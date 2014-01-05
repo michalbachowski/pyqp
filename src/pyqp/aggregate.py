@@ -44,7 +44,7 @@ class Resettable(Abstract):
         self._list = []
 
     def __iter__(self):
-        if self._should_be_reset(self):
+        if self._should_be_reset(self._list):
             self._list = []
         return iter(self._list)
 
