@@ -15,12 +15,42 @@ class Abstract(object):
 
 
 class Accumulate(deque):
+    """Aggregator that accumulates values up to given size.
+    When size is reached and new item is added - oldest value is deleted.
+    This is just wrapper around collections.deque
+
+    >>> a = Accumulate(2)
+    >>> a.append(1)
+    >>> a.append(2)
+    >>> [i for i in a]
+    [1, 2]
+    >>> a.append(3)
+    >>> [i for i in a]
+    [2, 3]
+    """
 
     def __init__(self, size):
         deque.__init__(self, [], size)
 
 
 class TimeLimit(Abstract):
+    """Aggregator that accumulates values for given amount of seconds.
+    Outdated records are removed from list.
+
+    >>> from time import sleep
+    >>> t = TimeLimit(1)
+    >>> t.append(1)
+    >>> t.append(2)
+    >>> [i for i in t]
+    [1, 2]
+    >>> t.append(3)
+    >>> [i for i in t]
+    [1, 2, 3]
+    >>> sleep(2)
+    >>> [i for i in t]
+    []
+    """
+
 
     def __init__(self, timeout):
         self._timeout = timeout
@@ -38,6 +68,20 @@ class TimeLimit(Abstract):
 
 
 class Resettable(Abstract):
+    """Aggregator that accumulates values until explicity resetted.
+    Reset function is given internal list of values.
+    Reset function is checked when Resettable.__iter__ is executed.
+
+    >>> reset = lambda values: len(values) > 2
+    >>> r = Resettable(reset)
+    >>> r.append(1)
+    >>> r.append(2)
+    >>> [i for i in r]
+    [1, 2]
+    >>> r.append(3)
+    >>> [i for i in r]
+    []
+    """
 
     def __init__(self, check_func):
         self._should_be_reset = check_func
