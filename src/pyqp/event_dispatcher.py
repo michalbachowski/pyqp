@@ -32,7 +32,7 @@ class Dispatcher(object):
         return self
 
     def _map_data(self, event_name, data):
-        return chain.from_iterable(mapper(data) \
+        return chain.from_iterable(mapper(event_name, data) \
                                         for mapper in self._mappers[event_name])
 
     def process(self):
