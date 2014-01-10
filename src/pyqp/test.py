@@ -6,7 +6,7 @@ from .column import Column
 from .configurators import simple_dict_factory, list_of_dicts_to_list_of_tuples,\
                     aggregate_filter, dbus_forwardable, set_default_drawer
 from .table import Table
-from .mappers import alias, exclude, dict_row, single_value, values_list
+from .mappers import alias, exclude, dict_row, single_value, values_list, Keys
 from .reducers import mean
 from .aggregate import Accumulate
 from .event_dispatcher import Dispatcher
@@ -15,11 +15,19 @@ from .dumper import prefix_dumper, csv_dumper, stdout_dumper
 mappers = [\
     ('test',
         exclude(
-            alias(
-                dict_row('query_quality', ('query_id',)),
-                {'success': ['success_1h', 'success_1d']}
+            exclude(
+                alias(
+                    alias(
+                        dict_row(('query_id',)),
+                        {'success': ['success_1h', 'success_1d']}
+                    ),
+                    {'test': ['query_quality']},
+                    Keys.TABLE_NAME
+                ),
+                ['success']
             ),
-            ['success']
+            ['test'],
+            Keys.TABLE_NAME
         )
     ),
     ('pyqp_cell_value', single_value),\
