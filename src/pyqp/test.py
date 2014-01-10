@@ -6,7 +6,8 @@ from .column import Column
 from .configurators import simple_dict_factory, list_of_dicts_to_list_of_tuples,\
                     aggregate_filter, dbus_forwardable, set_default_drawer
 from .table import Table
-from .mappers import alias, exclude, dict_row, single_value, values_list, Keys
+from .mappers import dict_row, single_value, values_list, Keys
+from .filters import alias, exclude
 from .reducers import mean
 from .aggregate import Accumulate
 from .event_dispatcher import Dispatcher
