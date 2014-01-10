@@ -2,35 +2,38 @@
 # -*- coding: utf-8 -*-
 from functools import wraps
 
-def _alter_tuple(row, index, value):
-    tmp = list(row)
+def _alter_tuple(cell, index, value):
+    tmp = list(cell)
     tmp[index] = value
     return tuple(tmp)
 
-def alias(decorated, aliases, key=2):
+def alias(*args, **aliases):
+    try:
+        key = args[0]
+    except IndexError:
+        key = 2
     @wraps(alias)
-    def _map(event_name, iterable):
-        for row in decorated(event_name, iterable):
-            yield row
-            val = row[key]
-            if val not in aliases:
-                continue
-            for alias in aliases[val]:
-                yield _alter_tuple(row, key, alias)
-    return _map
+    def _filter(cell):
+        yield cell
+        val = cell[key]
+        if val not in aliases:
+            return
+        for alias in aliases[val]:
+            yield _alter_tuple(cell, key, alias)
+    return _filter
 
-def select(decorated, allowed, key=2):
+def select(*allowed, **kwargs):
+    key = kwargs.get('key', 2)
     @wraps(select)
-    def _map(event_name, iterable):
-        for row in decorated(event_name, iterable):
-            if row[key] in allowed:
-                yield row
-    return _map
+    def _filter(cell):
+        if cell[key] in allowed:
+            yield cell
+    return _filter
 
-def exclude(decorated, excluded, key=2):
+def exclude(*excluded, **kwargs):
+    key = kwargs.get('key', 2)
     @wraps(exclude)
-    def _map(event_name, iterable):
-        for row in decorated(event_name, iterable):
-            if row[key] not in excluded:
-                yield row
-    return _map
+    def _filter(cell):
+        if cell[key] not in excluded:
+            yield cell
+    return _filter

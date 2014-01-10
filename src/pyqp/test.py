@@ -14,25 +14,13 @@ from .event_dispatcher import Dispatcher
 from .dumper import prefix_dumper, csv_dumper, stdout_dumper
 
 mappers = [\
-    ('test',
-        exclude(
-            exclude(
-                alias(
-                    alias(
-                        dict_row(('query_id',)),
-                        {'success': ['success_1h', 'success_1d']}
-                    ),
-                    {'test': ['query_quality']},
-                    Keys.TABLE_NAME
-                ),
-                ['success']
-            ),
-            ['test'],
-            Keys.TABLE_NAME
-        )
-    ),
-    ('pyqp_cell_value', single_value),\
-    ('pyqp_cell_list', values_list)
+    ('test', dict_row(('query_id',)), [\
+        alias(success=['success_1h', 'success_1d']),\
+        alias(Keys.TABLE_NAME, test=['query_quality']),\
+        exclude('success'),\
+        exclude('test', key=Keys.TABLE_NAME)]),
+    ('pyqp_cell_value', single_value, []),\
+    ('pyqp_cell_list', values_list, [])
 ]
 
 tables = [
@@ -68,8 +56,8 @@ for (table, drawer, config) in map(lambda x: config_filters(*x), \
     d.add_table(table, drawer)
 
 
-for (event_name, mapper) in mappers:
-    d.add_mapper(event_name, mapper)
+for (event_name, mapper, filters) in mappers:
+    d.add_mapper(event_name, mapper, filters)
 
 ######
 # invoke test
