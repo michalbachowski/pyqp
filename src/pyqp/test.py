@@ -11,7 +11,8 @@ from .mappers.filters import alias, exclude
 from .reducers import mean
 from .aggregate import Accumulate
 from .event_dispatcher import Dispatcher
-from .dumper import prefix_dumper, csv_dumper, stdout_dumper
+from .dumpers import csv_dumper, filterable_dumper
+from .dumpers.filters import prepend, write_to_stdout
 
 mappers = [\
     ('test', dict_row(('query_id',)), [\
@@ -26,7 +27,8 @@ mappers = [\
 tables = [
     {
         'aggregate_locally': True,
-        'drawer': stdout_dumper(prefix_dumper(csv_dumper, '1.23')),
+        'drawer': filterable_dumper(csv_dumper, \
+                                            [prepend('1.23'), write_to_stdout]),
         'table': Table('query_quality', [
             'query_id', \
             {'name': 'last_succeded'}, \
@@ -47,7 +49,7 @@ is_leader = True
 
 config_filters = aggregate_filter(simple_dict_factory, \
         dbus_forwardable(is_leader, 'proxy_instance'), \
-        set_default_drawer(stdout_dumper(csv_dumper)))
+        set_default_drawer(filterable_dumper(csv_dumper, [write_to_stdout])))
 
 d = Dispatcher()
 
