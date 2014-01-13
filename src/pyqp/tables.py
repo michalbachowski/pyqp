@@ -44,6 +44,7 @@ class Table(Abstract):
     def __iter__(self):
         return iter(map(methodcaller('values'), self._rows.values()))
 
+
 class TableForwarder(Abstract):
 
     def __init__(self, proxy, name, columns):
@@ -53,10 +54,12 @@ class TableForwarder(Abstract):
     def add_value(self, row, column, value):
         self._proxy.send('pyqp_cell_value', (self.name, row, column, value))
 
+
 class TableFilterable(Abstract):
 
-    def __init__(self, base_table, col_filter, row_filter):
+    def __init__(self, base_table, name=None, col_filter=None, row_filter=None):
         self._table = base_table
+        self._name = name
         self._col_filter = col_filter if col_filter is not None else self._true
         self._row_filter = row_filter if row_filter is not None else self._true
 
@@ -65,7 +68,7 @@ class TableFilterable(Abstract):
 
     @property
     def name(self):
-        return self._table.name
+        return self._table.name if self._name is None else self._name
 
     @property
     def columns(self):
