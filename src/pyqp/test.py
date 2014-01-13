@@ -4,7 +4,7 @@
 from functools import partial
 from .column import Column
 from .configurators import simple_dict_factory, list_of_dicts_to_list_of_tuples,\
-                    aggregate_filter, dbus_forwardable, set_default_drawer
+                    aggregate_filter, dbus_forwardable, set_default_dumper
 from .table import Table
 from .mappers import dict_row, single_value, values_list, Keys
 from .mappers.filters import alias, exclude
@@ -27,7 +27,7 @@ mappers = [\
 tables = [
     {
         'aggregate_locally': True,
-        'drawer': filterable_dumper(csv_dumper, \
+        'dumper': decorated_dumper(csv_dumper, \
                                             [prepend('1.23'), write_to_stdout]),
         'table': Table('query_quality', [
             'query_id', \
@@ -49,7 +49,7 @@ is_leader = True
 
 config_filters = aggregate_filter(simple_dict_factory, \
         dbus_forwardable(is_leader, 'proxy_instance'), \
-        set_default_drawer(filterable_dumper(csv_dumper, [write_to_stdout])))
+        set_default_dumper(decorated_dumper(csv_dumper, [write_to_stdout])))
 
 d = Dispatcher()
 
