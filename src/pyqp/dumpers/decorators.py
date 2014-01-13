@@ -5,7 +5,7 @@ from functools import wraps
 
 
 def prepend(prefix):
-    """Dumper that prepends given string with predefined prefix.
+    """Prepends given string with predefined prefix.
     Output and prefix are separated with newline character.
 
     @param  prefix      -- string to prepend dumped data with
@@ -19,9 +19,9 @@ def prepend(prefix):
     """
     p = str(prefix)
     @wraps(prepend)
-    def _filter(data):
+    def _decorator(data):
         return p + "\n" + data
-    return _filter
+    return _decorator
 
 
 def write_to_file(file_name):
@@ -45,15 +45,16 @@ def write_to_file(file_name):
     >>> os.unlink('/tmp/test')
     """
     @wraps(write_to_file)
-    def _filter(data):
+    def _decorator(data):
         with open(file_name, 'w') as f:
             f.write(data)
         return data
-    return _filter
+    return _decorator
 
 
 def write_to_stdout(data):
-    """Writes received data to STDOUT
+    """Writes received data to STDOUT and returns given data so another
+    decorator can use it
 
     Usage:
     >>> a=write_to_stdout('foo')

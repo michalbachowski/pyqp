@@ -12,7 +12,7 @@ from .reducers import mean
 from .aggregate import Accumulate
 from .event_dispatcher import Dispatcher
 from .dumpers import csv_dumper, decorated_dumper
-from .dumpers.filters import prepend, write_to_stdout
+from .dumpers.decorators import prepend, write_to_stdout
 
 mappers = [\
     ('test', dict_row(('query_id',)), [\
