@@ -30,11 +30,11 @@ class Dispatcher(object):
         return self
 
     def _get_cells(self, event_name, data):
-        return chain.from_iterable(self._apply_mapper(event_name, mapper, \
+        return chain.from_iterable(self._map_event_data(event_name, mapper, \
                                                                 filters, data)
             for (mapper, filters) in self._mappers[event_name])
 
-    def _apply_mapper(self, event_name, mapper, filters, data):
+    def _map_event_data(self, event_name, mapper, filters, data):
         return chain.from_iterable(reduce(self._filter_cells, filters, [cell]) \
                                         for cell in mapper(event_name, data))
 
