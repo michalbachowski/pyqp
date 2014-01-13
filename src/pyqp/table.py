@@ -28,16 +28,6 @@ class Abstract(object):
         return iter([])
 
 
-class TableForwarder(Abstract):
-
-    def __init__(self, proxy, name, columns):
-        self._proxy = proxy
-        Abstract.__init__(self, name, columns)
-
-    def add_value(self, row, column, value):
-        self._proxy.send('pyqp_cell_value', (self.name, row, column, value))
-
-
 class Table(Abstract):
 
     def __init__(self, name, columns):
@@ -53,3 +43,36 @@ class Table(Abstract):
 
     def __iter__(self):
         return iter(map(methodcaller('values'), self._rows.values()))
+
+class TableForwarder(Abstract):
+
+    def __init__(self, proxy, name, columns):
+        self._proxy = proxy
+        Abstract.__init__(self, name, columns)
+
+    def add_value(self, row, column, value):
+        self._proxy.send('pyqp_cell_value', (self.name, row, column, value))
+
+class TableFilterable(Abstract):
+
+    def __init__(self, base_table, col_filter, row_filter):
+        self._table = base_table
+        self._col_filter = col_filter if col_filter is not None else self._true
+        self._row_filter = row_filter if row_filter is not None else self._true
+
+    def _true(self, *args, **kwargs):
+        return True
+
+    @property
+    def name(self):
+        return self._table.name
+
+    @property
+    def columns(self):
+        return self._filter_columns(self._table.columns)
+
+    def __iter__(self):
+        return map(self._filter_columns, filter(self._row_filter, self._table))
+
+    def _filter_columns(self, row):
+        return (col for col in row if self._col_filter(col.name))
