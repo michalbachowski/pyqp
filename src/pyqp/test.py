@@ -5,7 +5,7 @@ from functools import partial
 from .column import Column
 from .configurators import simple_dict_factory, list_of_dicts_to_list_of_tuples,\
                     aggregate_filter, dbus_forwardable, set_default_dumper
-from .table import Table
+from .tables import Table
 from .mappers import dict_row, single_value, values_list, Keys
 from .mappers.filters import alias, exclude
 from .reducers import mean
