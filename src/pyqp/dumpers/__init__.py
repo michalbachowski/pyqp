@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from itertools import chain
 from functools import wraps
+from pyqp.table import Abstract as TableAbstract
 
 
 def csv_dumper(table):
@@ -23,6 +24,35 @@ def csv_dumper(table):
         ','.join([column.type_name for column in table.columns]),\
         ','.join(['"%s"' % column.desc for column in table.columns])],\
         [','.join(map(str, row)) for row in table]))
+
+
+class TableFilterable(TableAbstract):
+
+    def __init__(self, base_table, filter_func):
+        self._table = base_table
+        self._filter_func = filter_func
+
+    @property
+    def name(self):
+        return self._table.name
+
+    @property
+    def columns(self):
+        return self._filter_columns(self._table.columns)
+
+    def __iter__(self):
+        return (self._filter_columns(row) for row in iter(self._table))
+
+    def _filter_columns(self, row):
+        return (col for col in row if self._filter_func(col.name))
+
+
+def filterable_dumper(base_dumper, filter_func):
+
+    @wraps(filterable_dumper)
+    def _dumper(table):
+        return base_dumper(TableFilterable(table, filter_func))
+    return _dumper
 
 
 def decorated_dumper(base_dumper, decorators):
