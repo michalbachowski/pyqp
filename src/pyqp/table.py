@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from collections import defaultdict, OrderedDict
 from pyqp.column import column_factory as default_column_factory
+from operator import methodcaller
 
 
 class Abstract(object):
@@ -51,4 +52,4 @@ class Table(Abstract):
         return self
 
     def __iter__(self):
-        return iter(self._rows.values())
+        return iter(map(methodcaller('values'), self._rows.values()))

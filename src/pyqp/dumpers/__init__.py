@@ -22,7 +22,7 @@ def csv_dumper(table):
         ','.join([column.name for column in table.columns]),\
         ','.join([column.type_name for column in table.columns]),\
         ','.join(['"%s"' % column.desc for column in table.columns])],\
-        [','.join(map(str, row.values())) for row in table]))
+        [','.join(map(str, row)) for row in table]))
 
 
 def decorated_dumper(base_dumper, decorators):
