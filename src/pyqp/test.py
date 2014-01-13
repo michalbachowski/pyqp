@@ -11,7 +11,7 @@ from .mappers.filters import alias, exclude
 from .reducers import mean
 from .aggregate import Accumulate
 from .event_dispatcher import Dispatcher
-from .dumpers import csv_dumper, filterable_dumper
+from .dumpers import csv_dumper, decorated_dumper
 from .dumpers.filters import prepend, write_to_stdout
 
 mappers = [\

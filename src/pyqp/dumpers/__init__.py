@@ -25,21 +25,21 @@ def csv_dumper(table):
         [','.join(map(str, row.values())) for row in table]))
 
 
-def filterable_dumper(base_dumper, filters):
+def decorated_dumper(base_dumper, decorators):
     """Dumps given table using predefined base_dumper.
-    Then each of given filters is applied to received output
+    Then each of given decorators is applied to received output
 
     @param  base_dumper -- base dumper to perform table dump
     @type   base_dumper -- callable
-    @param  filters     -- list of filters to be applied to base_dumper output
-    @type   filters     -- list
+    @param  decorators  -- list of decorators to be applied to base_dumper output
+    @type   decorators  -- list
     @return type
     """
 
     def _reduce(data, filter_func):
         return filter_func(data)
 
-    @wraps(filterable_dumper)
+    @wraps(decorated_dumper)
     def _dump(table):
-        return reduce(_reduce, filters, base_dumper(table))
+        return reduce(_reduce, decorators, base_dumper(table))
     return _dump
