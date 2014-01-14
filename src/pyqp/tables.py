@@ -138,6 +138,9 @@ class TableFilterable(Abstract):
     def columns(self):
         return self._filter_columns(self._table.columns)
 
+    def add_value(self, row, column, value):
+        return self._table.add_value(row, column, value)
+
     def __iter__(self):
         return map(self._filter_columns, filter(self._row_filter, self._table))
 
