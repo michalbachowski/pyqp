@@ -83,6 +83,29 @@ def percentile(percent):
     return _reduce
 
 
+def weighted_average(iterable):
+    """
+    Takes a list of tuples (value, weight) and
+    returns weighted average as calculated by
+    Sum of all values * weights / Sum of all weights
+
+    >>> weighted_average([1,2,3])
+    Traceback (most recent call last):
+    ...
+    TypeError: 'int' object is not iterable
+    >>> weighted_average([(1, 1), (2, 1)])
+    1.5
+    >>> weighted_average([(1, 3), (3, 3)])
+    2.0
+    """
+    numerator = 0
+    denominator = 0
+    for (value, weight) in iterable:
+        denominator += weight
+        numerator += value * weight
+    return numerator / denominator
+
+
 # from Python 3.4 "statistics" module is available adding median, mean, mode
 # and other statistic functions, see:
 # http://docs.python.org/3self.4/library/statistics.html
