@@ -12,10 +12,10 @@ def csv_dumper(table):
     @type   table -- pyqp.table.Abstract
 
     Usage:
-    >>> from pyqp.table import Table
+    >>> from pyqp.tables import Table
     >>> t = Table('foo', ['column_1', 'column_2'])
     >>> t.add_value(1, 'column_1', 2).add_value(1, 'column_2', 3) #doctest: +ELLIPSIS
-    <pyqp.table.Table object at 0x...>
+    <pyqp.tables.Table object at 0x...>
     >>> csv_dumper(t)
     'column_1,column_2\\nstr,str\\n"column_1","column_2"\\n2,3'
     """
