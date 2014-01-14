@@ -30,9 +30,10 @@ class Abstract(object):
 
 class Table(Abstract):
 
-    def __init__(self, name, columns):
-        Abstract.__init__(self, name, columns)
+    def __init__(self, *args, **kwargs):
+        Abstract.__init__(self, *args, **kwargs)
         self._rows = defaultdict(self._init_row)
+        self._values_extractor = methodcaller('values')
 
     def _init_row(self):
         return OrderedDict((c.name, c) for c in self._create_columns_list())
@@ -42,7 +43,7 @@ class Table(Abstract):
         return self
 
     def __iter__(self):
-        return iter(map(methodcaller('values'), self._rows.values()))
+        return iter(map(self._values_extractor, self._rows.values()))
 
 
 class TableForwarder(Abstract):
