@@ -100,6 +100,25 @@ class TableForwarder(Abstract):
 
 
 class TableFilterable(Abstract):
+    """Table that filters columns and/or rows from output (it hold all data!)
+
+    >>> from time import sleep
+    >>> from operator import attrgetter
+    >>> t = Table('foo', ['a', 'b'])
+    >>> tf = TableFilterable(t, col_filter=lambda c: c == 'a')
+    >>> tf.add_value(1, 'a', 11) #doctest: +ELLIPSIS
+    <tables.Table object at 0x...>
+    >>> tf.add_value(1, 'b', 22) #doctest: +ELLIPSIS
+    <tables.Table object at 0x...>
+    >>> map(attrgetter('name'), t.columns)
+    ['a', 'b']
+    >>> map(attrgetter('name'), tf.columns)
+    ['a']
+    >>> [map(str, i) for i in t]
+    [['11', '22']]
+    >>> [map(str, i) for i in tf]
+    [['11']]
+    """
 
     def __init__(self, base_table, name=None, col_filter=None, row_filter=None):
         self._table = base_table
@@ -108,6 +127,7 @@ class TableFilterable(Abstract):
         self._row_filter = row_filter if row_filter is not None else self._true
 
     def _true(self, *args, **kwargs):
+        """Default filter that will just leave any value"""
         return True
 
     @property
