@@ -142,7 +142,10 @@ class TableFilterable(Abstract):
         return self._table.add_value(row, column, value)
 
     def __iter__(self):
-        return map(self._filter_columns, filter(self._row_filter, self._table))
+        return iter(map(self._filter_columns, self._filter_rows()))
+
+    def _filter_rows(self):
+        return filter(self._row_filter, self._table)
 
     def _filter_columns(self, row):
         return (col for col in row if self._col_filter(col.name))
