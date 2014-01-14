@@ -17,6 +17,7 @@ def column_factory(config):
         config.desc
         config.type_name
         config.append
+        config.reduce
         config.__copy__
         config.__str__
     except AttributeError:
@@ -69,8 +70,11 @@ class Abstract(object):
     def append(self, value):
         raise NotImplementedError()
 
-    def __str__(self):
+    def reduce(self):
         raise NotImplementedError()
+
+    def __str__(self):
+        return str(self.reduce())
 
     def __copy__(self):
         raise NotImplementedError()
@@ -90,10 +94,10 @@ class Column(Abstract):
         return Column(self.name, self._reducer, self._handler_factory, \
                     self.desc, self.type_name, self._default_value)
 
-    def __str__(self):
+    def reduce(self):
         if len(self._handler) == 0:
             return self._default_value
-        return str(self._reducer(self._handler))
+        return self._reducer(self._handler)
 
     def append(self, value):
         self._handler.append(value)
