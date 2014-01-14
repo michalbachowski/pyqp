@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from copy import copy
 from functools import partial
 from pyqp.aggregate import Accumulate
 from pyqp.reducers import last, nvl
@@ -8,44 +7,6 @@ from pyqp.reducers import last, nvl
 
 def _nvl(*args):
     return nvl(args)
-
-
-def column_factory(config):
-    # so maybe config is valid Column instance?
-    try:
-        config.name
-        config.desc
-        config.type_name
-        config.append
-        config.reduce
-        config.__copy__
-        config.__str__
-    except AttributeError:
-        pass
-    else:
-        return copy(config)
-
-    # is column config a dict?
-    try:
-        return Column(**config)
-    except TypeError:
-        pass
-
-    # is column config a tuple?
-    try:
-        return Column(*config)
-    except TypeError:
-        pass
-
-    # is column config a string?
-    try:
-        return Column(config)
-    except TypeError:
-        pass
-
-    # I give up...
-    raise ValueError("Expected valid column configuration or instance, got %s" \
-                                                                    % config)
 
 
 class Abstract(object):

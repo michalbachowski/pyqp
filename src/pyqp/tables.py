@@ -3,7 +3,7 @@
 from collections import defaultdict, OrderedDict
 from operator import methodcaller
 from time import time
-from pyqp.column import column_factory as default_column_factory
+from pyqp.columns.factory import default_column_factory
 
 
 class Abstract(object):

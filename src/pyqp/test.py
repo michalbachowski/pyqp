@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from functools import partial
-from .column import Column
+from .columns import Column
 from .configurators import simple_dict_factory, list_of_dicts_to_list_of_tuples,\
                     aggregate_filter, dbus_forwardable, set_default_dumper
 from .tables import Table
