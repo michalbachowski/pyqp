@@ -100,7 +100,7 @@ class TableForwarder(Abstract):
 
 
 class TableFilterable(Abstract):
-    """Table that filters columns and/or rows from output (it hold all data!)
+    """Table that filters columns and/or rows from output (it holds all data!)
 
     >>> from time import sleep
     >>> from operator import attrgetter
