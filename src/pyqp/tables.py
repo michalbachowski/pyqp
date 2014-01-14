@@ -18,7 +18,7 @@ class Abstract(object):
         return map(self._column_factory, self._columns_conf)
 
     def add_value(self, row, column, value):
-        pass
+        return self
 
     @property
     def columns(self):
