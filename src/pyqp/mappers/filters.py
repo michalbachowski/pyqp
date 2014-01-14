@@ -37,3 +37,19 @@ def exclude(*excluded, **kwargs):
         if cell[key] not in excluded:
             yield cell
     return _filter
+
+def assign_weight(**weights):
+    """Assigns given weights to values for cells from given columns
+
+    >>> aw = assign_weight(foo=2, bar=3)
+    >>> [i for i in aw(('table', 'row', 'foo', 1))]
+    [('table', 'row', 'foo', (1, 2))]
+    >>> [i for i in aw(('table', 'row', 'baz', 1))]
+    [('table', 'row', 'baz', 1)]
+    """
+    def _filter(cell):
+        if cell[2] in weights:
+            yield _alter_tuple(cell, 3, (cell[3], weights[cell[2]]))
+        else:
+            yield cell
+    return _filter
