@@ -12,8 +12,8 @@ from .mappers.filters import alias, exclude
 from .reducers import mean
 from .aggregate import Accumulate
 from .event_dispatcher import Dispatcher
-from .dumpers import csv_dumper, decorated_dumper
-from .dumpers.decorators import prepend, write_to_stdout
+from .dumpers import csv_dumper, filtered_dumper
+from .dumpers.filters import aggregate_filter as af, prepend, write_to_stdout
 
 mappers = [\
     ('test', dict_row(('query_id',)), [\
@@ -28,7 +28,7 @@ mappers = [\
 tables = [
     {
         'aggregate_locally': True,
-        'dumper': decorated_dumper(csv_dumper, \
+        'dumper': filtered_dumper(csv_dumper, \
                                             [prepend('1.23'), write_to_stdout]),
         'table': Table('query_quality', [
             'query_id', \
@@ -52,7 +52,7 @@ allow_forwarding = lambda table_name: forwardable_tables.get(table_name, False)
 
 configurator = manager(simple_dict_factory, aggregate_filter(\
         make_forwardable(allow_forwarding, 'proxy_instance'), \
-        set_default_dumper(decorated_dumper(csv_dumper, [write_to_stdout]))))
+        set_default_dumper(filtered_dumper(csv_dumper, af(write_to_stdout)))))
 
 d = Dispatcher()
 

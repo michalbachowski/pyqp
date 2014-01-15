@@ -2,6 +2,18 @@
 # -*- coding: utf-8 -*-
 import sys
 from functools import wraps
+from itertools import chain
+
+
+def aggregate_filter(*filters):
+
+    def _apply_filters(output, filter_func):
+        return chain.from_iterable(map(filter_func, output))
+
+    @wraps(aggregate_filter)
+    def _filter(data):
+        return reduce(_apply_filters, filters, [data])
+    return _filter
 
 
 def prepend(prefix):
@@ -20,7 +32,7 @@ def prepend(prefix):
     p = str(prefix)
     @wraps(prepend)
     def _decorator(data):
-        return p + "\n" + data
+        yield p + "\n" + data
     return _decorator
 
 
@@ -48,7 +60,7 @@ def write_to_file(file_name):
     def _decorator(data):
         with open(file_name, 'w') as f:
             f.write(data)
-        return data
+        yield data
     return _decorator
 
 
@@ -63,4 +75,4 @@ def write_to_stdout(data):
     'foo'
     """
     sys.stdout.write(data)
-    return data
+    yield data

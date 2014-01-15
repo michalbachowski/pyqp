@@ -19,24 +19,24 @@ def csv_dumper(table):
     >>> csv_dumper(t)
     'column_1,column_2\\nstr,str\\n"column_1","column_2"\\n2,3'
     """
-    return "\n".join(chain([\
+    yield "\n".join(chain([\
         ','.join([column.name for column in table.columns]),\
         ','.join([column.type_name for column in table.columns]),\
         ','.join(['"%s"' % column.desc for column in table.columns])],\
         [','.join(map(str, row)) for row in table]))
 
 
-def filterable_dumper(base_dumper, col_filter=None, row_filter=None):
+def filtered_table_dumper(base_dumper, col_filter=None, row_filter=None):
 
-    @wraps(filterable_dumper)
+    @wraps(filtered_table_dumper)
     def _dumper(table):
         return base_dumper(TableFilterable(table, col_filter, row_filter))
     return _dumper
 
 
-def decorated_dumper(base_dumper, decorators):
+def filtered_dumper(base_dumper, filter_func):
     """Dumps given table using predefined base_dumper.
-    Then each of given decorators is applied to received output
+    Then given filter is applied to received output
 
     @param  base_dumper -- base dumper to perform table dump
     @type   base_dumper -- callable
@@ -45,10 +45,7 @@ def decorated_dumper(base_dumper, decorators):
     @return type
     """
 
-    def _reduce(data, filter_func):
-        return filter_func(data)
-
-    @wraps(decorated_dumper)
+    @wraps(filtered_dumper)
     def _dump(table):
-        return reduce(_reduce, decorators, base_dumper(table))
+        return chain.from_iterable(map(filter_func, base_dumper(table)))
     return _dump
