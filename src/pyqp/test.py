@@ -3,7 +3,7 @@
 
 from functools import partial
 from .columns import Column
-from .configurators import simple_dict_factory, filtered_configurator
+from .configurators import simple_dict_config, list_of_configs, filtered_configurator
 from .configurators.filters import aggregate_filter, make_forwardable, \
                                                             set_default_dumper
 from .tables import Table
@@ -49,9 +49,12 @@ is_leader = True
 forwardable_tables = {}
 allow_forwarding = lambda table_name: forwardable_tables.get(table_name, False)
 
-configurator = filtered_configurator(simple_dict_factory, aggregate_filter(\
+configurator = filtered_configurator(list_of_configs(simple_dict_config), \
+    aggregate_filter(\
         make_forwardable(allow_forwarding, 'proxy_instance'), \
-        set_default_dumper(filtered_dumper(csv_dumper, af(write_to_stdout)))))
+        set_default_dumper(filtered_dumper(csv_dumper, af(write_to_stdout)))\
+    )\
+)
 
 d = Dispatcher()
 
