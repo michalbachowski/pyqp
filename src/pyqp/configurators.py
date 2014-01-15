@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from functools import partial, wraps
-from pyqp.tables import TableForwarder
+from pyqp.tables.decorators import TableForwarder
 
 
 def list_of_dicts_to_list_of_tuples(iterable):
@@ -22,18 +22,18 @@ def aggregate_filter(*filters):
     return _filter
 
 
-def make_table_forwardable(allow_forwarding, forwarder_factory):
-    @wraps(make_table_forwardable)
+def decorate_table(allow_decorating, decorator):
+    @wraps(decorate_table)
     def _filter(table, dumper, config):
-        if not config.get('aggregate_locally', allow_forwarding):
-            table = forwarder_factory(table.name, table.columns)
+        if allow_decorating(config):
+            table = decorator(table)
         return (table, dumper, config)
     return _filter
 
 
-def dbus_forwardable(allow_forwarding, dbus):
-    return make_table_forwardable(allow_forwarding, \
-                                                partial(TableForwarder, dbus))
+def make_forwardable(allow_forwarding, proxy):
+    return decorate_table(lambda c: True, partial(TableForwarder, proxy=proxy, \
+                                            allow_forwarding=allow_forwarding))
 
 
 def set_default_dumper(dumper):

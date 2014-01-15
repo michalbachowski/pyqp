@@ -4,7 +4,7 @@
 from functools import partial
 from .columns import Column
 from .configurators import simple_dict_factory, list_of_dicts_to_list_of_tuples,\
-                    aggregate_filter, dbus_forwardable, set_default_dumper
+                    aggregate_filter, make_forwardable, set_default_dumper
 from .tables import Table
 from .mappers import dict_row, single_value, values_list, Keys
 from .mappers.filters import alias, exclude
@@ -46,15 +46,18 @@ tables = [
 #######
 
 is_leader = True
+forwardable_tables = {}
+allow_forwarding = lambda table_name: forwardable_tables.get(table_name, False)
 
 config_filters = aggregate_filter(simple_dict_factory, \
-        dbus_forwardable(is_leader, 'proxy_instance'), \
+        make_forwardable(allow_forwarding, 'proxy_instance'), \
         set_default_dumper(decorated_dumper(csv_dumper, [write_to_stdout])))
 
 d = Dispatcher()
 
 for (table, drawer, config) in map(lambda x: config_filters(*x), \
                                     list_of_dicts_to_list_of_tuples(tables)):
+    forwardable_tables[table.name] = not config.get('aggregate_locally', True)
     d.add_table(table, drawer)
 
 
