@@ -13,7 +13,7 @@ class Dispatcher(object):
 
     def add_table(self, table, drawer):
         if table.name in self._tables:
-            raise RuntimeError('Duplicated table')
+            raise ValueError("duplicate table '{0}' found".format(table.name))
         self._tables[table.name] = table
         self._drawers[table.name] = drawer
         return self
