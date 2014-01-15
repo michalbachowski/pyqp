@@ -23,17 +23,13 @@ class Dispatcher(object):
         return self
 
     def dispatch(self, event_name, data):
-        if event_name not in self._mappers:
-            return self
         for (table, row, column, value) in self._get_cells(event_name, data):
             self._tables[table].add_value(row, column, value)
         return self
 
     def _get_cells(self, event_name, data):
-        return chain.from_iterable(imap(self._map_event_data, cycle([event_name]), self._mappers[event_name], cycle([data])))
-        return chain.from_iterable(self._map_event_data(event_name, mapper, \
-                                                                data)
-            for mapper in self._mappers[event_name])
+        return chain.from_iterable(imap(self._map_event_data, \
+                cycle([event_name]), self._mappers[event_name], cycle([data])))
 
     def _map_event_data(self, event_name, mapper, data):
         return mapper(event_name, data)
