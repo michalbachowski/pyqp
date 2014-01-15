@@ -1,6 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from functools import wraps
+from itertools import chain
+
+def aggregate_filter(*filters):
+
+    def _apply_filters(output, filter_func):
+        return chain.from_iterable(map(filter_func, output))
+
+    @wraps(aggregate_filter)
+    def _filter(cell):
+        return reduce(_apply_filters, filters, [cell])
+    return _filter
 
 def _alter_tuple(cell, index, value):
     tmp = list(cell)

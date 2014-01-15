@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from itertools import chain
+from itertools import chain, imap, cycle
 from collections import defaultdict
 
 
@@ -18,8 +18,8 @@ class Dispatcher(object):
         self._drawers[table.name] = drawer
         return self
 
-    def add_mapper(self, event_name, mapper, filters=[]):
-        self._mappers[event_name].append((mapper, filters))
+    def add_mapper(self, event_name, mapper):
+        self._mappers[event_name].append(mapper)
         return self
 
     def dispatch(self, event_name, data):
@@ -30,17 +30,15 @@ class Dispatcher(object):
         return self
 
     def _get_cells(self, event_name, data):
+        return chain.from_iterable(imap(self._map_event_data, cycle([event_name]), self._mappers[event_name], cycle([data])))
         return chain.from_iterable(self._map_event_data(event_name, mapper, \
-                                                                filters, data)
-            for (mapper, filters) in self._mappers[event_name])
+                                                                data)
+            for mapper in self._mappers[event_name])
 
-    def _map_event_data(self, event_name, mapper, filters, data):
-        return chain.from_iterable(reduce(self._filter_cells, filters, [cell]) \
-                                        for cell in mapper(event_name, data))
-
-    def _filter_cells(self, iterable, filter_func):
-        return chain.from_iterable(map(filter_func, iterable))
+    def _map_event_data(self, event_name, mapper, data):
+        return mapper(event_name, data)
 
     def process(self):
         for table in self._tables.values():
-            self._drawers[table.name](table)
+            # execute lazy evaluation (generators)
+            [i for i in self._drawers[table.name](table)]
