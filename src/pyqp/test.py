@@ -3,12 +3,12 @@
 
 from functools import partial
 from .columns import Column
-from .configurators import simple_dict_factory, manager
+from .configurators import simple_dict_factory, filtered_configurator
 from .configurators.filters import aggregate_filter, make_forwardable, \
                                                             set_default_dumper
 from .tables import Table
-from .mappers import dict_row, single_value, values_list, Keys
-from .mappers.filters import alias, exclude
+from .mappers import dict_row, single_value, values_list, filtered_mapper, Keys
+from .mappers.filters import aggregate_filter as af2, alias, exclude
 from .reducers import mean
 from .aggregate import Accumulate
 from .event_dispatcher import Dispatcher
@@ -16,20 +16,19 @@ from .dumpers import csv_dumper, filtered_dumper
 from .dumpers.filters import aggregate_filter as af, prepend, write_to_stdout
 
 mappers = [\
-    ('test', dict_row(('query_id',)), [\
+    ('test', filtered_mapper(dict_row(('query_id',)), af2(
         alias(success=['success_1h', 'success_1d']),\
         alias(Keys.TABLE_NAME, test=['query_quality']),\
         exclude('success'),\
-        exclude('test', key=Keys.TABLE_NAME)]),
-    ('pyqp_cell_value', single_value, []),\
-    ('pyqp_cell_list', values_list, [])
+        exclude('test', key=Keys.TABLE_NAME)))),
+    ('pyqp_cell_value', single_value),\
+    ('pyqp_cell_list', values_list)
 ]
 
 tables = [
     {
         'aggregate_locally': True,
-        'dumper': filtered_dumper(csv_dumper, \
-                                            [prepend('1.23'), write_to_stdout]),
+        'dumper': filtered_dumper(csv_dumper, af(prepend('1.23'), write_to_stdout)),
         'table': Table('query_quality', [
             'query_id', \
             {'name': 'last_succeded'}, \
@@ -50,7 +49,7 @@ is_leader = True
 forwardable_tables = {}
 allow_forwarding = lambda table_name: forwardable_tables.get(table_name, False)
 
-configurator = manager(simple_dict_factory, aggregate_filter(\
+configurator = filtered_configurator(simple_dict_factory, aggregate_filter(\
         make_forwardable(allow_forwarding, 'proxy_instance'), \
         set_default_dumper(filtered_dumper(csv_dumper, af(write_to_stdout)))))
 
@@ -61,8 +60,8 @@ for (table, drawer, config) in configurator(tables):
     d.add_table(table, drawer)
 
 
-for (event_name, mapper, filters) in mappers:
-    d.add_mapper(event_name, mapper, filters)
+for (event_name, mapper) in mappers:
+    d.add_mapper(event_name, mapper)
 
 ######
 # invoke test
