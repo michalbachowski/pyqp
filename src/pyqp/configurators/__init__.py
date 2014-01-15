@@ -3,14 +3,14 @@
 from itertools import chain
 from functools import wraps
 
-def manager(configurator, filter_func):
+def filtered_configurator(base_configurator, filter_func):
 
     def _apply_filter(item):
         return filter_func(*item)
 
-    @wraps(manager)
+    @wraps(filtered_configurator)
     def _configurator(configuration):
-        return chain.from_iterable(map(_apply_filter, map(configurator, \
+        return chain.from_iterable(map(_apply_filter, map(base_configurator, \
                                                                 configuration)))
     return _configurator
 
