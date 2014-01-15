@@ -26,8 +26,11 @@ def prepend(prefix):
 
     Usage:
 
-    >>> prepend('foo')('bar')
-    'foo\\nbar'
+    >>> c = prepend('foo')('bar')
+    >>> c #doctest: +ELLIPSIS
+    <generator object _decorator at 0x...>
+    >>> [i for i in c]
+    ['foo\\nbar']
     """
     p = str(prefix)
     @wraps(prepend)
@@ -47,8 +50,11 @@ def write_to_file(file_name):
     Usage:
     >>> import os.path
     >>> import os
-    >>> write_to_file('/tmp/test')('foo')
-    'foo'
+    >>> c = write_to_file('/tmp/test')('foo')
+    >>> c #doctest: +ELLIPSIS
+    <generator object _decorator at 0x...>
+    >>> [i for i in c]
+    ['foo']
     >>> os.path.exists('/tmp/test')
     True
     >>> with open('/tmp/test') as f:
@@ -69,10 +75,11 @@ def write_to_stdout(data):
     decorator can use it
 
     Usage:
-    >>> a=write_to_stdout('foo')
-    foo
-    >>> a
-    'foo'
+    >>> c=write_to_stdout('foo')
+    >>> c #doctest: +ELLIPSIS
+    <generator object write_to_stdout at 0x...>
+    >>> [i for i in c]
+    foo['foo']
     """
     sys.stdout.write(data)
     yield data

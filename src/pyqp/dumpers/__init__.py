@@ -16,8 +16,11 @@ def csv_dumper(table):
     >>> t = Table('foo', ['column_1', 'column_2'])
     >>> t.add_value(1, 'column_1', 2).add_value(1, 'column_2', 3) #doctest: +ELLIPSIS
     <pyqp.tables.Table object at 0x...>
-    >>> csv_dumper(t)
-    'column_1,column_2\\nstr,str\\n"column_1","column_2"\\n2,3'
+    >>> c = csv_dumper(t)
+    >>> c #doctest: +ELLIPSIS
+    <generator object csv_dumper at 0x...>
+    >>> [i for i in c]
+    ['column_1,column_2\\nstr,str\\n"column_1","column_2"\\n2,3']
     """
     yield "\n".join(chain([\
         ','.join([column.name for column in table.columns]),\
