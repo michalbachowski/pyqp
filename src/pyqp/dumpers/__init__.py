@@ -26,9 +26,9 @@ def csv_dumper(table):
         [','.join(map(str, row)) for row in table]))
 
 
-def filtered_table_dumper(base_dumper, col_filter=None, row_filter=None):
+def filtering_table_dumper(base_dumper, col_filter=None, row_filter=None):
 
-    @wraps(filtered_table_dumper)
+    @wraps(filtering_table_dumper)
     def _dumper(table):
         return base_dumper(TableFilterable(table, col_filter, row_filter))
     return _dumper
@@ -40,8 +40,8 @@ def filtered_dumper(base_dumper, filter_func):
 
     @param  base_dumper -- base dumper to perform table dump
     @type   base_dumper -- callable
-    @param  decorators  -- list of decorators to be applied to base_dumper output
-    @type   decorators  -- list
+    @param  filter_func -- filter to be applied to base_dumper output
+    @type   filter_func -- callable
     @return type
     """
 
