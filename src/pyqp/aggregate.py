@@ -14,6 +14,29 @@ class Abstract(object):
         raise NotImplementedError("Implement")
 
 
+class LastValue(object):
+    """Aggregator that hold only last given value
+
+    >>> lv = LastValue()
+    >>> lv.append(1)
+    >>> list(lv)
+    [1]
+    >>> lv.append(2)
+    >>> lv.append(3)
+    >>> list(lv)
+    [3]
+    """
+
+    def __init__(self):
+        self._value = None
+
+    def append(self, value):
+        self._value = value
+
+    def __iter__(self):
+        return iter([self._value])
+
+
 class Accumulate(deque):
     """Aggregator that accumulates values up to given size.
     When size is reached and new item is added - oldest value is deleted.
