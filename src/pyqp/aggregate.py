@@ -51,7 +51,6 @@ class TimeLimit(Abstract):
     []
     """
 
-
     def __init__(self, timeout):
         self._timeout = timeout
         self._getter = itemgetter(1)
@@ -61,10 +60,13 @@ class TimeLimit(Abstract):
         self._deque.append((time(), value))
 
     def __iter__(self):
+        self._prune_old_rows()
+        return (self._getter(i) for i in self._deque)
+
+    def _prune_old_rows(self):
         treshold = time() - self._timeout
         while len(self._deque) > 0 and self._deque[0][0] < treshold:
             self._deque.popleft()
-        return (self._getter(i) for i in self._deque)
 
 
 class Resettable(Abstract):
@@ -87,10 +89,10 @@ class Resettable(Abstract):
         self._should_be_reset = check_func
         self._list = []
 
+    def append(self, value):
+        self._list.append(value)
+
     def __iter__(self):
         if self._should_be_reset(self._list):
             self._list = []
         return iter(self._list)
-
-    def append(self, value):
-        self._list.append(value)
