@@ -31,9 +31,10 @@ tables = [
         'dumper': filtered_dumper(csv_dumper, af(prepend('1.23'), write_to_stdout)),
         'table': Table('query_quality', [
             'query_id', \
+            'foo', \
             {'name': 'last_succeded'}, \
-            ('runtime', mean), \
-            Column('success_1h', sum), \
+            ('runtime', mean, partial(Accumulate, 60)), \
+            Column('success_1h', sum, partial(Accumulate, 60)), \
             ('success_1d', sum, partial(Accumulate, 1440)),\
         ])
     }
