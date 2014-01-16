@@ -27,13 +27,12 @@ class LastValue(object):
     [3]
     """
 
-    def __init__(self):
-        self._value = None
-
     def append(self, value):
         self._value = value
 
     def __iter__(self):
+        if not hasattr(self, '_value'):
+            return iter([])
         return iter([self._value])
 
 
