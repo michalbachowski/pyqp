@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from functools import partial
-from pyqp.aggregate import Accumulate
+from pyqp.aggregate import LastValue
 from pyqp.reducers import last, nvl
 
 
@@ -48,7 +48,7 @@ class Column(Abstract):
         Abstract.__init__(self, name, _nvl(desc, name), _nvl(type_name, 'str'))
         self._reducer = _nvl(reducer, last)
         self._default_value = str(_nvl(default_value, 0))
-        self._handler_factory = _nvl(handler_factory, partial(Accumulate, 60))
+        self._handler_factory = _nvl(handler_factory, LastValue)
         self._handler = self._handler_factory()
 
     def __copy__(self):
