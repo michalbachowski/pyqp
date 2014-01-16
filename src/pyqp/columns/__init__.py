@@ -56,9 +56,10 @@ class Column(Abstract):
                     self.desc, self.type_name, self._default_value)
 
     def reduce(self):
-        if len(self._handler) == 0:
+        iterable = list(self._handler)
+        if len(iterable) == 0:
             return self._default_value
-        return self._reducer(self._handler)
+        return self._reducer(iterable)
 
     def append(self, value):
         self._handler.append(value)
