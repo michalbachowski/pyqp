@@ -24,14 +24,14 @@ class Abstract(object):
 
 class TableForwarder(Abstract):
 
-    def __init__(self, base_table, allow_forwarding, proxy):
-        self._proxy = proxy
+    def __init__(self, base_table, allow_forwarding, sender):
+        self._sender = sender
         self._do_forward = allow_forwarding
         Abstract.__init__(self, base_table)
 
     def add_value(self, row, column, value):
         if self._do_forward(self.name):
-            self._proxy.send('pyqp_cell_value', (self.name, row, column, value))
+            self._sender('pyqp_cell_value', (self.name, row, column, value))
         else:
             Abstract.add_value(self, row, column, value)
         return self

@@ -24,9 +24,9 @@ def decorate_table(allow_decorating, decorator):
     return _filter
 
 
-def make_forwardable(allow_forwarding, proxy):
-    return decorate_table(lambda c: True, partial(TableForwarder, proxy=proxy, \
-                                            allow_forwarding=allow_forwarding))
+def make_forwardable(allow_forwarding, sender):
+    return decorate_table(lambda c: True, partial(TableForwarder, \
+                            sender=sender, allow_forwarding=allow_forwarding))
 
 
 def set_default_dumper(default_dumper):
