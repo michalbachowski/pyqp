@@ -23,7 +23,34 @@ class Abstract(object):
 
 
 class TableForwarder(Abstract):
+    """Table decorator that allow forwarding values using predefined proxy.
+    Decision whether to forward or not is made using given callable.
 
+    @param   base_table -- table to decorate
+    @type    base_table -- pyqp.tables.Table
+    @param   allow_forwarding -- callable that tells whether forwarding is allowed or not
+    @type    allow_forwarding -- callable
+    @param   sender -- callable that is responsible for forwarding
+    @type    sender -- callable
+    @returns self -- TableForwarder
+
+    >>> from pyqp.tables import Table
+    >>> from sys import stdout
+    >>> t = Table('foo', ['a'])
+    >>> allow = False
+    >>> fwd = lambda table_name: allow
+    >>> sender = lambda event_name, cell: stdout.write((event_name, cell))
+    >>> tf = TableForwarder(t, fwd, sender)
+    >>> tf.add_value(1, 'a', 11) #doctest: +ELLIPSIS
+    <decorators.TableForwarder object at 0x...>
+    >>> [map(str, i) for i in t]
+    [['11']]
+    >>> allow = True
+    >>> x = tf.add_value(2, 'a', 12)
+    ('pyqp_cell_value', ('foo', 2, 'a', 12))
+    >>> [map(str, i) for i in t]
+    [['11']]
+    """
     def __init__(self, base_table, allow_forwarding, sender):
         self._sender = sender
         self._do_forward = allow_forwarding
