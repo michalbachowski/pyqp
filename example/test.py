@@ -2,18 +2,18 @@
 # -*- coding: utf-8 -*-
 
 from functools import partial
-from .columns import Column
-from .configurators import simple_dict_config, list_of_configs, filtered_configurator
-from .configurators.filters import aggregate_filter, make_forwardable, \
+from pyqp.columns import Column
+from pyqp.configurators import simple_dict_config, list_of_configs, filtered_configurator
+from pyqp.configurators.filters import aggregate_filter, make_forwardable, \
                                                             set_default_dumper
-from .tables import Table
-from .mappers import dict_row, single_value, values_list, filtered_mapper, Keys
-from .mappers.filters import aggregate_filter as af2, alias, exclude
-from .reducers import mean
-from .aggregate import Accumulate
-from .event_dispatcher import Dispatcher
-from .dumpers import csv_dumper, filtered_dumper
-from .dumpers.filters import aggregate_filter as af, prepend, write_to_stdout
+from pyqp.tables import Table
+from pyqp.mappers import dict_row, single_value, values_list, filtered_mapper, Keys
+from pyqp.mappers.filters import aggregate_filter as af2, alias, exclude
+from pyqp.reducers import mean
+from pyqp.aggregate import Accumulate
+from pyqp.event_dispatcher import Dispatcher
+from pyqp.dumpers import csv_dumper, filtered_dumper
+from pyqp.dumpers.filters import aggregate_filter as af, prepend, write_to_stdout
 
 mappers = [\
     ('test', filtered_mapper(dict_row(('query_id',)), af2(
