@@ -57,8 +57,37 @@ def dict_row(*primary_key_columns):
     return _map
 
 def single_value(event_name, data):
+    """Mapper that accepts single tuple with data
+
+    @param  event_name -- name of event
+    @type   event_name -- str
+    @param  data       -- iterable: (table_name, pk, column, value)
+    @param  data       -- iterable
+    @return iterable
+
+    VALUES ARE PASSED BY REFERNCE
+
+    >>> list(single_value('foo', [1, 2, 3, 4]))
+    [(1, 2, 3, 4)]
+    >>> list(single_value('foo', [1, 2, 3, 4, 5, 6]))
+    [(1, 2, 3, 4)]
+    """
     yield (data[0], data[1], data[2], data[3])
 
 def values_list(event_name, data):
-    for value in data:
-        yield (value[0], value[1], value[2], value[3])
+    """Mapper that accepts iterable with iterables with data
+
+    @param  event_name -- name of event
+    @type   event_name -- str
+    @param  data       -- iterable of iterables: [(table_name, pk, column, value)]
+    @param  data       -- iterable
+    @return iterable
+
+    VALUES ARE PASSED BY REFERNCE
+
+    >>> list(values_list('foo', [[1, 2, 3, 4]]))
+    [(1, 2, 3, 4)]
+    >>> list(values_list('foo', [[1, 2, 3, 4, 5, 6]]))
+    [(1, 2, 3, 4)]
+    """
+    return chain.from_iterable([single_value(event_name, v) for v in data])
