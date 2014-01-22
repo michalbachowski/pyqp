@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from operator import itemgetter
-from functools import wraps
 from itertools import chain
 
 
@@ -19,15 +18,23 @@ def filtered_mapper(base_mapper, filter_func):
     @type   base_mapper -- callable
     @param  filter_func -- filter to be applied to base_mapper output
     @type   filter_func -- callable
-    @return callable -- callable that accepts one argument: input data
+    @return callable -- callable that accepts two arguments: event name and input data
 
     >>> m = filtered_mapper(lambda e, x: [x], lambda x: [x+1])
     >>> list(m('event_name', 2))
     [3]
     """
 
-    @wraps(filtered_mapper)
     def _map(event_name, data):
+        """Maps given data given to list of tuples
+        [(table_name, pk, column, value), ...]
+
+        @param event_name -- name of event
+        @type  event_name -- str
+        @param data       -- data to be mapped. Acceptable by base_mapper
+        @type  data       -- type
+        @return iterable
+        """
         return chain.from_iterable(map(filter_func, base_mapper(event_name, \
                                                                         data)))
     return _map
@@ -40,7 +47,7 @@ def dict_row(*primary_key_columns):
 
     @param  *primary_key_columns -- one or more columns names that composes primary key
     @type   *primary_key_columns -- str
-    @return type
+    @return iterable
 
     >>> from operator import itemgetter
     >>> m = dict_row('a')
@@ -48,9 +55,20 @@ def dict_row(*primary_key_columns):
     >>> sorted(list(m('event_name', {'a': 1, 'b': 3})), key=ig) == sorted([('event_name', 1, 'a', 1), ('event_name', 1, 'b', 3)], key=ig)
     True
     """
+
     _pk = itemgetter(*primary_key_columns)
-    @wraps(dict_row)
     def _map(event_name, data):
+        """Maps table data given as dict to list of tuples
+        [(table_name, pk, column, value), ...]
+        Event name is treated as table name and primary key is composed
+        from values from one or more predefined columns.
+
+        @param event_name -- name of event
+        @type  event_name -- str
+        @param data       -- data to be mapped
+        @type  data       -- dict
+        @return iterable
+        """
         pk = _pk(data)
         for (column, value) in data.items():
             yield (event_name, pk, column, value)
