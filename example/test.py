@@ -16,7 +16,7 @@ from pyqp.dumpers import csv_dumper, filtered_dumper
 from pyqp.dumpers.filters import aggregate_filter as af, prepend, write_to_stdout
 
 mappers = [\
-    ('test', filtered_mapper(dict_row(('query_id',)), af2(
+    ('test', filtered_mapper(dict_row('query_id'), af2(
         alias(success=['success_1h', 'success_1d']),\
         alias(Keys.TABLE_NAME, test=['query_quality']),\
         exclude('success'),\
