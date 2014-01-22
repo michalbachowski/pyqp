@@ -15,15 +15,19 @@ from pyqp.event_dispatcher import Dispatcher
 from pyqp.dumpers import csv_dumper, filtered_dumper
 from pyqp.dumpers.filters import aggregate_filter as af, prepend, write_to_stdout
 
-mappers = [\
-    ('test', filtered_mapper(dict_row('query_id'), af2(
-        alias(success=['success_1h', 'success_1d']),\
-        alias(Keys.TABLE_NAME, test=['query_quality']),\
-        exclude('success'),\
-        exclude('test', key=Keys.TABLE_NAME)))),
-    ('pyqp_cell_value', single_value),\
-    ('pyqp_cell_list', values_list)
-]
+mappers = {
+    'test': filtered_mapper(
+        dict_row('query_id'),
+        af2(
+            alias(success=['success_1h', 'success_1d']),
+            alias(Keys.TABLE_NAME, test=['query_quality']),
+            exclude('success'),
+            exclude('test', key=Keys.TABLE_NAME)
+        )
+    ),
+    'pyqp_cell_value': single_value,
+    'pyqp_cell_list': values_list
+}
 
 tables = [
     {
@@ -64,7 +68,7 @@ for (table, drawer, config) in configurator(tables):
     d.add_table(table, drawer)
 
 
-for (event_name, mapper) in mappers:
+for (event_name, mapper) in mappers.items():
     d.add_mapper(event_name, mapper)
 
 ######
