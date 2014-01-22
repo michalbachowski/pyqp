@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from functools import wraps
 from itertools import chain
+from copy import deepcopy
 
 def aggregate_filter(*filters):
     """Filter that aggregates other filters and uses them to filter value
@@ -128,4 +129,22 @@ def assign_weight(**weights):
             yield _alter_tuple(cell, 3, (cell[3], weights[cell[2]]))
         else:
             yield cell
+    return _filter
+
+def dereference(key=3):
+    """Dereferences value from given key (makes deepcopy of it)
+
+    >>> f = dereference()
+    >>> v = (1, 2, 3, ['a', 'b'])
+    >>> w = list(f(v))[0]
+    >>> w == v
+    True
+    >>> [w[i] == v[i] for i in range(4)]
+    [True, True, True, True]
+    >>> [id(w[i]) == id(v[i]) for i in range(4)]
+    [True, True, True, False]
+    """
+    @wraps(dereference)
+    def _filter(cell):
+        yield _alter_tuple(cell, key, deepcopy(cell[key]))
     return _filter
