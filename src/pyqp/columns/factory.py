@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from copy import copy
 from functools import wraps
 from pyqp.columns import Column
 
@@ -36,13 +35,11 @@ def column_instance_factory(config):
         config.type_name
         config.append
         config.reduce
-        config.__copy__
         config.__str__
+        return config.duplicate()
     except AttributeError:
         raise TypeError('Expected config to be instance of pyqp.columns.Column, got %s' % \
                                                                 type(config))
-    else:
-        return copy(config)
 
 def dict_factory(config):
     """Creates new instance of Column using given dict

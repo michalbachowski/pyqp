@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from functools import partial
 from pyqp.aggregate import LastValue
 from pyqp.reducers import last, nvl
 
@@ -37,7 +36,10 @@ class Abstract(object):
     def __str__(self):
         return str(self.reduce())
 
-    def __copy__(self):
+    def duplicate(self):
+        """Makes duplicate of itself *without any data*
+
+        @return Abstract"""
         raise NotImplementedError()
 
 
@@ -51,7 +53,10 @@ class Column(Abstract):
         self._handler_factory = _nvl(handler_factory, LastValue)
         self._handler = self._handler_factory()
 
-    def __copy__(self):
+    def duplicate(self):
+        """Makes duplicate of itself *without any data*
+
+        @return Column"""
         return Column(self.name, self._reducer, self._handler_factory, \
                     self.desc, self.type_name, self._default_value)
 
