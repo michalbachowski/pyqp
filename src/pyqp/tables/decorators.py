@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from time import time
 
 
 class Abstract(object):
@@ -118,3 +119,47 @@ class TableFilterable(Abstract):
 
     def _filter_columns(self, row):
         return (col for col in row if self._col_filter(col.name))
+
+
+class TableTimeLimit(Abstract):
+    """Table that prunes old rows after given amount of seconds.
+
+    >>> from time import sleep
+    >>> from pyqp.tables import Table
+    >>> tb = Table('foo', ['a'])
+    >>> t = TableTimeLimit(tb, 1)
+    >>> t.add_value(1, 'a', 11) #doctest: +ELLIPSIS
+    <decorators.TableTimeLimit object at 0x...>
+    >>> t.add_value(2, 'a', 22) #doctest: +ELLIPSIS
+    <decorators.TableTimeLimit object at 0x...>
+    >>> [map(str, i) for i in t]
+    [['11'], ['22']]
+    >>> t.add_value(3, 'a', 33) #doctest: +ELLIPSIS
+    <decorators.TableTimeLimit object at 0x...>
+    >>> [map(str, i) for i in t]
+    [['11'], ['22'], ['33']]
+    >>> sleep(2)
+    >>> [map(str, i) for i in t]
+    []
+    """
+
+    def __init__(self, base_table, timeout):
+        Abstract.__init__(self, base_table)
+        self._timeout = timeout
+        self._cache = {}
+
+    def add_value(self, row, column, value):
+        self._cache[row] = time()
+        return Abstract.add_value(self, row, column, value)
+
+    def __iter__(self):
+        self._prune_old_rows()
+        return Abstract.__iter__(self)
+
+    def _prune_old_rows(self):
+        treshold = time() - self._timeout
+        for (key, timestamp) in self._cache.items():
+            if timestamp > treshold:
+                continue
+            self.remove_row(key)
+            del self._cache[key]
