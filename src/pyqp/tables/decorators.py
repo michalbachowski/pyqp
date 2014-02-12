@@ -18,6 +18,11 @@ class Abstract(object):
     def add_value(self, row, column, value):
         return self._table.add_value(row, column, value)
 
+    def remove_row(self, key):
+        self._table.remove_row(key)
+        return self
+
+
     def __iter__(self):
         return iter(self._table)
 

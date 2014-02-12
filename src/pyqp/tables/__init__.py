@@ -25,6 +25,9 @@ class Abstract(object):
     def columns(self):
         return self._columns
 
+    def remove_row(self, row):
+        pass
+
     def __iter__(self):
         return iter([])
 
@@ -45,6 +48,10 @@ class Table(Abstract):
 
     def __iter__(self):
         return iter(map(self._values_extractor, self._rows.values()))
+
+    def remove_row(self, key):
+        del self._rows[key]
+        return self
 
 
 class TableTimeLimit(Table):
