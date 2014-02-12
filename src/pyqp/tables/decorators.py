@@ -16,7 +16,8 @@ class Abstract(object):
         return self._table.columns
 
     def add_value(self, row, column, value):
-        return self._table.add_value(row, column, value)
+        self._table.add_value(row, column, value)
+        return self
 
     def remove_row(self, key):
         self._table.remove_row(key)
@@ -78,9 +79,9 @@ class TableFilterable(Abstract):
     >>> t = Table('foo', ['a', 'b'])
     >>> tf = TableFilterable(t, col_filter=lambda c: c == 'a')
     >>> tf.add_value(1, 'a', 11) #doctest: +ELLIPSIS
-    <pyqp.tables.Table object at 0x...>
+    <decorators.TableFilterable object at 0x...>
     >>> tf.add_value(1, 'b', 22) #doctest: +ELLIPSIS
-    <pyqp.tables.Table object at 0x...>
+    <decorators.TableFilterable object at 0x...>
     >>> map(attrgetter('name'), t.columns)
     ['a', 'b']
     >>> map(attrgetter('name'), tf.columns)
