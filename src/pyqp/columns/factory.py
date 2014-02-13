@@ -15,31 +15,23 @@ def aggregate_factory(*factories):
         raise ValueError("Expected valid column configuration, got %s" % config)
     return _factory
 
-def column_instance_factory(config):
-    """Creates new instance out of existing Column instance
+def callable_factory(config):
+    """Creates new instance using given callable (usually partial)
 
-    >>> c = Column('foo')
-    >>> c1 = column_instance_factory(c)
-    >>> c == c1
-    False
-    >>> c1.name == c.name
-    True
-    >>> column_instance_factory('f')
+    >>> from functools import partial
+    >>> p = partial(Column, 'foo')
+    >>> c = callable_factory(p)
+    >>> c.name
+    'foo'
+    >>> callable_factory('f')
     Traceback (most recent call last):
     ...
-    TypeError: Expected config to be instance of pyqp.columns.Column, got <type 'str'>
+    TypeError: Expected config to be callable, got <type 'str'>
     """
     try:
-        config.name
-        config.desc
-        config.type_name
-        config.append
-        config.reduce
-        config.__str__
-        return config.duplicate()
-    except AttributeError:
-        raise TypeError('Expected config to be instance of pyqp.columns.Column, got %s' % \
-                                                                type(config))
+        return config()
+    except TypeError:
+        raise TypeError('Expected config to be callable, got %s' % type(config))
 
 def dict_factory(config):
     """Creates new instance of Column using given dict
@@ -93,6 +85,5 @@ def string_factory(config):
     except (TypeError, AttributeError):
         raise TypeError('Expected config to be a string, got %s' % type(config))
 
-
-default_column_factory = aggregate_factory(column_instance_factory, \
-                                    dict_factory, tuple_factory, string_factory)
+default_column_factory = aggregate_factory(callable_factory, dict_factory,
+                                                tuple_factory, string_factory)
