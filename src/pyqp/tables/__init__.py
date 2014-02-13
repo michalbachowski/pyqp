@@ -5,7 +5,7 @@ from operator import methodcaller
 from pyqp.columns.factory import default_column_factory
 
 
-class Abstract(object):
+class Table(object):
 
     def __init__(self, name, columns, column_factory=default_column_factory, \
                                                             *args, **kwargs):
@@ -13,33 +13,18 @@ class Abstract(object):
         self._columns_conf = columns
         self._column_factory = column_factory
         self._columns = list(self._create_columns_list())
+        self._rows = defaultdict(self._init_row)
+        self._values_extractor = methodcaller('values')
 
     def _create_columns_list(self):
         return map(self._column_factory, self._columns_conf)
 
-    def add_value(self, row, column, value):
-        return self
+    def _init_row(self):
+        return OrderedDict((c.name, c) for c in self._create_columns_list())
 
     @property
     def columns(self):
         return self._columns
-
-    def remove_row(self, row):
-        pass
-
-    def __iter__(self):
-        return iter([])
-
-
-class Table(Abstract):
-
-    def __init__(self, *args, **kwargs):
-        Abstract.__init__(self, *args, **kwargs)
-        self._rows = defaultdict(self._init_row)
-        self._values_extractor = methodcaller('values')
-
-    def _init_row(self):
-        return OrderedDict((c.name, c) for c in self._create_columns_list())
 
     def add_value(self, row, column, value):
         self._rows[row][column].append(value)
