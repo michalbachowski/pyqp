@@ -38,7 +38,7 @@ tables = [
             'foo', \
             {'name': 'last_succeded'}, \
             ('runtime', mean, partial(Accumulate, 60)), \
-            Column('success_1h', sum, partial(Accumulate, 60)), \
+            partial(Column, 'success_1h', sum, partial(Accumulate, 60)), \
             ('success_1d', sum, partial(Accumulate, 1440)),\
         ])
     }
