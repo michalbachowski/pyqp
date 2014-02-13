@@ -1,19 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from pyqp.aggregate import LastValue
-from pyqp.reducers import last, nvl
+from pyqp.reducers import last
 
 
-def _nvl(*args):
-    return nvl(args)
+class Column(object):
 
-
-class Abstract(object):
-
-    def __init__(self, name, desc, type_name, *args, **kwargs):
+    def __init__(self, name, reducer=last, handler_factory=LastValue,
+                 desc=None, type_name='str', default_value=0):
         self._name = name
-        self._desc = desc
+        self._desc = desc if desc is not None else name
         self._type_name = type_name
+        self._reducer = reducer
+        self._default_value = default_value
+        self._handler_factory = handler_factory
+        self._handler = self._handler_factory()
 
     @property
     def name(self):
@@ -27,32 +28,6 @@ class Abstract(object):
     def type_name(self):
         return self._type_name
 
-    def append(self, value):
-        raise NotImplementedError()
-
-    def reduce(self):
-        raise NotImplementedError()
-
-    def __str__(self):
-        return str(self.reduce())
-
-    def duplicate(self):
-        """Makes duplicate of itself *without any data*
-
-        @return Abstract"""
-        raise NotImplementedError()
-
-
-class Column(Abstract):
-
-    def __init__(self, name, reducer=None, handler_factory=None, desc=None, \
-                                            type_name=None, default_value=None):
-        Abstract.__init__(self, name, _nvl(desc, name), _nvl(type_name, 'str'))
-        self._reducer = _nvl(reducer, last)
-        self._default_value = str(_nvl(default_value, 0))
-        self._handler_factory = _nvl(handler_factory, LastValue)
-        self._handler = self._handler_factory()
-
     def duplicate(self):
         """Makes duplicate of itself *without any data*
 
@@ -65,6 +40,9 @@ class Column(Abstract):
         if len(iterable) == 0:
             return self._default_value
         return self._reducer(iterable)
+
+    def __str__(self):
+        return str(self.reduce())
 
     def append(self, value):
         self._handler.append(value)
