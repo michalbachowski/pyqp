@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from itertools import chain
 from functools import wraps
-from pyqp.tables import Abstract as TableFilterable
+from pyqp.tables.decorators import TableFilterable
 
 
 def csv_dumper(table):
