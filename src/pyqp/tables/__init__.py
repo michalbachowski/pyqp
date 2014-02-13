@@ -12,7 +12,7 @@ class Table(object):
         self.name = name
         self._columns_conf = columns
         self._column_factory = column_factory
-        self._columns = list(self._create_columns_list())
+        self.columns = list(self._create_columns_list())
         self._rows = defaultdict(self._init_row)
         self._values_extractor = methodcaller('values')
 
@@ -21,10 +21,6 @@ class Table(object):
 
     def _init_row(self):
         return OrderedDict((c.name, c) for c in self._create_columns_list())
-
-    @property
-    def columns(self):
-        return self._columns
 
     def add_value(self, row, column, value):
         self._rows[row][column].append(value)
