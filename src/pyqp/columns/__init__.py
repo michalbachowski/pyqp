@@ -13,15 +13,7 @@ class Column(object):
         self.type_name = type_name
         self._reducer = reducer
         self._default_value = default_value
-        self._handler_factory = handler_factory
-        self._handler = self._handler_factory()
-
-    def duplicate(self):
-        """Makes duplicate of itself *without any data*
-
-        @return Column"""
-        return Column(self.name, self._reducer, self._handler_factory, \
-                    self.desc, self.type_name, self._default_value)
+        self._handler = handler_factory()
 
     def reduce(self):
         iterable = list(self._handler)
