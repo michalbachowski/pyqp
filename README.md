@@ -1,0 +1,4 @@
+pyqp
+====
+
+Python data aggregator
