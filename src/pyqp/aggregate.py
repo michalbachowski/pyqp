@@ -5,15 +5,6 @@ from collections import deque
 from time import time
 
 
-class Abstract(object):
-
-    def append(self, value):
-        pass
-
-    def __iter__(self):
-        raise NotImplementedError("Implement")
-
-
 class LastValue(object):
     """Aggregator that hold only last given value
 
@@ -55,7 +46,7 @@ class Accumulate(deque):
         deque.__init__(self, [], size)
 
 
-class TimeLimit(Abstract):
+class TimeLimit(object):
     """Aggregator that accumulates values for given amount of seconds.
     Outdated records are removed from list.
 
@@ -91,7 +82,7 @@ class TimeLimit(Abstract):
             self._deque.popleft()
 
 
-class Resettable(Abstract):
+class Resettable(object):
     """Aggregator that accumulates values until explicity resetted.
     Reset function is given internal list of values.
     Reset function is checked when Resettable.__iter__ is executed.
