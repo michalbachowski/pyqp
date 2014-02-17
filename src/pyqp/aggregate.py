@@ -21,6 +21,9 @@ class LastValue(object):
     def append(self, value):
         self._value = value
 
+    def duplicate(self):
+        return LastValue()
+
     def __iter__(self):
         if not hasattr(self, '_value'):
             return iter([])
@@ -44,6 +47,9 @@ class Accumulate(deque):
 
     def __init__(self, size):
         deque.__init__(self, [], size)
+
+    def duplicate(self):
+        return Accumulate(self.maxlen)
 
 
 class TimeLimit(object):
@@ -71,6 +77,9 @@ class TimeLimit(object):
 
     def append(self, value):
         self._deque.append((time(), value))
+
+    def duplicate(self):
+        return TimeLimit(self._timeout)
 
     def __iter__(self):
         self._prune_old_rows()
@@ -101,6 +110,9 @@ class Resettable(object):
     def __init__(self, check_func):
         self._should_be_reset = check_func
         self._list = []
+
+    def duplicate(self):
+        return Resettable(self._should_be_reset)
 
     def append(self, value):
         self._list.append(value)
