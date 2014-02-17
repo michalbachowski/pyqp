@@ -24,7 +24,6 @@ class Abstract(object):
         self._table.remove_row(key)
         return self
 
-
     def __iter__(self):
         return iter(self._table)
 
@@ -42,8 +41,9 @@ class TableForwarder(Abstract):
     @returns self -- TableForwarder
 
     >>> from pyqp.tables import Table
+    >>> from pyqp.columns import Column
     >>> from sys import stdout
-    >>> t = Table('foo', ['a'])
+    >>> t = Table('foo', [Column('a')])
     >>> allow = False
     >>> fwd = lambda table_name: allow
     >>> sender = lambda event_name, cell: stdout.write((event_name, cell))
@@ -77,7 +77,8 @@ class TableFilterable(Abstract):
     >>> from time import sleep
     >>> from operator import attrgetter
     >>> from pyqp.tables import Table
-    >>> t = Table('foo', ['a', 'b'])
+    >>> from pyqp.columns import Column
+    >>> t = Table('foo', [Column('a'), Column('b')])
     >>> tf = TableFilterable(t, col_filter=lambda c: c == 'a')
     >>> tf.add_value(1, 'a', 11) #doctest: +ELLIPSIS
     <decorators.TableFilterable object at 0x...>
@@ -126,7 +127,8 @@ class TableTimeLimit(Abstract):
 
     >>> from time import sleep
     >>> from pyqp.tables import Table
-    >>> tb = Table('foo', ['a'])
+    >>> from pyqp.columns import Column
+    >>> tb = Table('foo', [Column('a')])
     >>> t = TableTimeLimit(tb, 1)
     >>> t.add_value(1, 'a', 11) #doctest: +ELLIPSIS
     <decorators.TableTimeLimit object at 0x...>

@@ -13,7 +13,8 @@ def csv_dumper(table):
 
     Usage:
     >>> from pyqp.tables import Table
-    >>> t = Table('foo', ['column_1', 'column_2'])
+    >>> from pyqp.columns import Column
+    >>> t = Table('foo', [Column('column_1'), Column('column_2')])
     >>> t.add_value(1, 'column_1', 2).add_value(1, 'column_2', 3) #doctest: +ELLIPSIS
     <pyqp.tables.Table object at 0x...>
     >>> c = csv_dumper(t)
