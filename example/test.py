@@ -3,6 +3,7 @@
 
 from functools import partial
 from pyqp.columns import Column
+from pyqp.columns.factory import default_column_factory
 from pyqp.configurators import simple_dict_config, list_of_configs, filtered_configurator
 from pyqp.configurators.filters import aggregate_filter, make_forwardable, \
                                                             set_default_dumper
@@ -29,18 +30,20 @@ mappers = {
     'pyqp_cell_list': values_list
 }
 
+
+
 tables = [
     {
         'aggregate_locally': True,
         'dumper': filtered_dumper(csv_dumper, af(prepend('1.23'), write_to_stdout)),
-        'table': Table('query_quality', [
+        'table': Table('query_quality', default_column_factory(
             'query_id', \
             'foo', \
             {'name': 'last_succeded'}, \
-            ('runtime', mean, partial(Accumulate, 60)), \
-            partial(Column, 'success_1h', sum, partial(Accumulate, 60)), \
-            ('success_1d', sum, partial(Accumulate, 1440)),\
-        ])
+            ('runtime', mean, Accumulate(60)), \
+            Column('success_1h', sum, Accumulate(60)), \
+            ('success_1d', sum, Accumulate(1440)), \
+        ))
     }
 ]
 
