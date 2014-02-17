@@ -6,14 +6,14 @@ from pyqp.reducers import last
 
 class Column(object):
 
-    def __init__(self, name, reducer=last, handler_factory=LastValue,
-                 desc=None, type_name='str', default_value=0):
+    def __init__(self, name, reducer=last, handler=None, desc=None,
+                                            type_name='str', default_value=0):
         self.name = name
         self.desc = desc if desc is not None else name
         self.type_name = type_name
         self._reducer = reducer
         self._default_value = default_value
-        self._handler = handler_factory()
+        self._handler = handler if handler is not None else LastValue()
 
     def reduce(self):
         iterable = list(self._handler)
