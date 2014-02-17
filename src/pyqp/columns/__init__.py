@@ -27,3 +27,10 @@ class Column(object):
     def append(self, value):
         self._handler.append(value)
         return self
+
+    def duplicate(self):
+        """
+        Creates duplicate of current column instance *with empty handler*
+        """
+        return Column(self.name, self._reducer, self._handler.duplicate(),
+                      self.desc, self.type_name, self._default_value)
