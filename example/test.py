@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from functools import partial
 from pyqp.columns import Column
 from pyqp.columns.factory import default_column_factory
 from pyqp.configurators import simple_dict_config, list_of_configs, filtered_configurator
