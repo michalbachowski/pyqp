@@ -41,7 +41,7 @@ class TableForwarder(Abstract):
     @returns self -- TableForwarder
 
     >>> from pyqp.tables import Table
-    >>> from pyqp.columns import Column
+    >>> from pyqp.column import Column
     >>> from sys import stdout
     >>> t = Table('foo', [Column('a')])
     >>> allow = False
@@ -77,7 +77,7 @@ class TableFilterable(Abstract):
     >>> from time import sleep
     >>> from operator import attrgetter
     >>> from pyqp.tables import Table
-    >>> from pyqp.columns import Column
+    >>> from pyqp.column import Column
     >>> t = Table('foo', [Column('a'), Column('b')])
     >>> tf = TableFilterable(t, col_filter=lambda c: c == 'a')
     >>> tf.add_value(1, 'a', 11) #doctest: +ELLIPSIS
@@ -127,7 +127,7 @@ class TableTimeLimit(Abstract):
 
     >>> from time import sleep
     >>> from pyqp.tables import Table
-    >>> from pyqp.columns import Column
+    >>> from pyqp.column import Column
     >>> tb = Table('foo', [Column('a')])
     >>> t = TableTimeLimit(tb, 1)
     >>> t.add_value(1, 'a', 11) #doctest: +ELLIPSIS

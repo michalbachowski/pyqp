@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from functools import wraps
-from pyqp.columns import Column
+from pyqp.column import Column
 
 
 def aggregate_factory(*factories):
@@ -27,7 +27,7 @@ def column_instance_factory(config):
     >>> column_instance_factory('f')
     Traceback (most recent call last):
     ...
-    TypeError: Expected config to be instance of pyqp.columns.Column, got <type 'str'>
+    TypeError: Expected config to be instance of pyqp.column.Column, got <type 'str'>
     """
     try:
         config.name
@@ -38,7 +38,7 @@ def column_instance_factory(config):
         config.__str__
         return config.duplicate()
     except AttributeError:
-        raise TypeError('Expected config to be instance of pyqp.columns.Column, got %s' % \
+        raise TypeError('Expected config to be instance of pyqp.column.Column, got %s' % \
                                                                 type(config))
 
 def callable_factory(config):
