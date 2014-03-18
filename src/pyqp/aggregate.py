@@ -53,7 +53,7 @@ class Accumulate(deque):
 
 
 class TimeLimit(object):
-    """Aggregator that accumulates values for given amount of seconds.
+    """Aggregator that accumulates up to N values for given amount of seconds.
     Outdated records are removed from list.
 
     >>> from time import sleep
@@ -68,18 +68,29 @@ class TimeLimit(object):
     >>> sleep(2)
     >>> [i for i in t]
     []
+    >>> t = TimeLimit(1, 2)
+    >>> t.append(1)
+    >>> t.append(2)
+    >>> [i for i in t]
+    [1, 2]
+    >>> t.append(3)
+    >>> [i for i in t]
+    [2, 3]
+    >>> sleep(2)
+    >>> [i for i in t]
+    []
     """
 
-    def __init__(self, timeout):
+    def __init__(self, timeout, size=None):
         self._timeout = timeout
         self._getter = itemgetter(1)
-        self._deque = deque([])
+        self._deque = deque([], size)
 
     def append(self, value):
         self._deque.append((time(), value))
 
     def duplicate(self):
-        return TimeLimit(self._timeout)
+        return TimeLimit(self._timeout, self._deque.maxlen)
 
     def __iter__(self):
         self._prune_old_rows()
