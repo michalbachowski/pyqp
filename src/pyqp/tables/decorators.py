@@ -165,6 +165,10 @@ class TableTimeLimit(Abstract):
     <decorators.TableTimeLimit object at 0x...>
     >>> [map(str, i) for i in t]
     [['11'], ['22'], ['33']]
+    >>> t.remove_row(3) #doctest: +ELLIPSIS
+    <decorators.TableTimeLimit object at 0x...>
+    >>> [map(str, i) for i in t]
+    [['11'], ['22']]
     >>> sleep(2)
     >>> [map(str, i) for i in t]
     []
@@ -179,14 +183,15 @@ class TableTimeLimit(Abstract):
         self._cache[row] = time()
         return Abstract.add_value(self, row, column, value)
 
+    def remove_row(self, key):
+        del self._cache[key]
+        return Abstract.remove_row(self, key)
+
     def __iter__(self):
         self._prune_old_rows()
         return Abstract.__iter__(self)
 
     def _prune_old_rows(self):
         treshold = time() - self._timeout
-        for (key, timestamp) in self._cache.items():
-            if timestamp > treshold:
-                continue
-            self.remove_row(key)
-            del self._cache[key]
+        [self.remove_row(key) for (key, timestamp) \
+                                in self._cache.items() if timestamp <= treshold]
