@@ -71,6 +71,36 @@ class TableForwarder(Abstract):
         return self
 
 
+class TableRenamed(Abstract):
+    """Table that renames given table
+
+    >>> from pyqp.tables import Table
+    >>> from pyqp.column import Column
+    >>> t = Table('foo', [Column('a'), Column('b')])
+    >>> tr = TableRenamed(t, name='bar')
+    >>> tr.add_value(1, 'a', 11) #doctest: +ELLIPSIS
+    <decorators.TableRenamed object at 0x...>
+    >>> tr.add_value(1, 'b', 22) #doctest: +ELLIPSIS
+    <decorators.TableRenamed object at 0x...>
+    >>> t.columns == tr.columns
+    True
+    >>> [map(str, i) for i in t] == [map(str, i) for i in tr]
+    True
+    >>> t.name
+    'foo'
+    >>> tr.name
+    'bar'
+    """
+
+    def __init__(self, base_table, name):
+        Abstract.__init__(self, base_table)
+        self._name = name
+
+    @property
+    def name(self):
+        return self._name
+
+
 class TableFilterable(Abstract):
     """Table that filters columns and/or rows from output (it holds all data!)
 
@@ -94,19 +124,14 @@ class TableFilterable(Abstract):
     [['11']]
     """
 
-    def __init__(self, base_table, name=None, col_filter=None, row_filter=None):
+    def __init__(self, base_table, col_filter=None, row_filter=None):
         Abstract.__init__(self, base_table)
-        self._name = name
         self._col_filter = col_filter if col_filter is not None else self._true
         self._row_filter = row_filter if row_filter is not None else self._true
 
     def _true(self, *args, **kwargs):
         """Default filter that will just leave any value"""
         return True
-
-    @property
-    def name(self):
-        return self._table.name if self._name is None else self._name
 
     @property
     def columns(self):
