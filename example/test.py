@@ -82,4 +82,4 @@ m.dispatch('test', {'query_id': 1, 'last_succeded': 22, 'runtime': 9, 'success':
 m.dispatch('test', {'query_id': 2, 'last_succeded': 44, 'runtime': 9, 'success': 1})
 m.dispatch('pyqp_cell_value', ('query_quality', 2, 'runtime', 1))
 m.dispatch('pyqp_cell_list', [('query_quality', 1, 'runtime', 4)])
-m.process()
+m.dump()

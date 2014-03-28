@@ -34,7 +34,7 @@ class Manager(object):
     def _map_event_data(self, event_name, mapper, data):
         return mapper(event_name, data)
 
-    def process(self):
+    def dump(self):
         for table in self._tables.values():
             # execute lazy evaluation (generators)
             [i for i in self._dumpers[table.name](table)]
