@@ -12,13 +12,33 @@ def last(values):
 
     >>> last([1,2,3])
     3
-
+    >>> last([])
+    Traceback (most recent call last):
+    ...
+    IndexError: list index out of range
     >>> last()
     Traceback (most recent call last):
     ...
     TypeError: last() takes exactly 1 argument (0 given)
     """
     return values[-1]
+
+
+def first(values):
+    """Returns first value from given list
+
+    >>> first([1,2,3])
+    1
+    >>> first([])
+    Traceback (most recent call last):
+    ...
+    IndexError: list index out of range
+    >>> first()
+    Traceback (most recent call last):
+    ...
+    TypeError: first() takes exactly 1 argument (0 given)
+    """
+    return values[0]
 
 
 def nvl(values):
@@ -108,7 +128,7 @@ def weighted_average(iterable):
 
 # from Python 3.4 "statistics" module is available adding median, mean, mode
 # and other statistic functions, see:
-# http://docs.python.org/3self.4/library/statistics.html
+# http://docs.python.org/3.4/library/statistics.html
 try:
     from statistics import median, mean, mode
 except ImportError:
