@@ -30,6 +30,30 @@ def csv_dumper(table):
         [','.join(map(str, row)) for row in table]))
 
 
+def aggregated_dumper(*dumpers):
+    """Dumps given table using predefined dumpers
+
+    @param  table -- table to be dumped
+    @type   table -- pyqp.table.Abstract
+
+    Usage:
+    >>> from pyqp.tables import Table
+    >>> from pyqp.column import Column
+    >>> t = Table('foo', [Column('column_1'), Column('column_2')])
+    >>> t.add_value(1, 'column_1', 2).add_value(1, 'column_2', 3) #doctest: +ELLIPSIS
+    <pyqp.tables.Table object at 0x...>
+    >>> a = aggregated_dumper(csv_dumper, lambda t: [c.name for c in t.columns])(t)
+    >>> a #doctest: +ELLIPSIS
+    <generator object <genexpr> at 0x...>
+    >>> [[j for j in i] for i in a]
+    [['column_1,column_2\\nstr,str\\n"column_1","column_2"\\n2,3'], ['column_1', 'column_2']]
+    """
+    @wraps(aggregated_dumper)
+    def _aggregated_dumper(table):
+        return (dumper(table) for dumper in dumpers)
+    return _aggregated_dumper
+
+
 def filtering_table_dumper(base_dumper, col_filter=None, row_filter=None):
 
     @wraps(filtering_table_dumper)
