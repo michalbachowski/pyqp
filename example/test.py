@@ -5,7 +5,7 @@ from pyqp import Column, Table
 from pyqp.reducers import mean
 from pyqp.aggregate import Accumulate
 
-from pyqp.event_dispatcher import Dispatcher
+from pyqp.manager import Manager
 from pyqp.mappers import dict_row, single_value, values_list, filtered_mapper, Keys
 from pyqp.mappers.filters import aggregate_filter as af2, alias, exclude
 from pyqp.dumpers import csv_dumper, filtered_dumper
@@ -64,22 +64,22 @@ configurator = filtered_configurator(list_of_configs(simple_dict_config), \
     )\
 )
 
-d = Dispatcher()
+m = Manager()
 
 for (table, dumper, config) in configurator(tables):
     forwardable_tables[table.name] = not config.get('aggregate_locally', True)
-    d.add_table(table, dumper)
+    m.add_table(table, dumper)
 
 
 for (event_name, mapper) in mappers.items():
-    d.add_mapper(event_name, mapper)
+    m.add_mapper(event_name, mapper)
 
 ######
 # invoke test
 ######
-d.dispatch('test', {'query_id': 1, 'last_succeded': 2, 'runtime': 3, 'success': 4})
-d.dispatch('test', {'query_id': 1, 'last_succeded': 22, 'runtime': 9, 'success': 1})
-d.dispatch('test', {'query_id': 2, 'last_succeded': 44, 'runtime': 9, 'success': 1})
-d.dispatch('pyqp_cell_value', ('query_quality', 2, 'runtime', 1))
-d.dispatch('pyqp_cell_list', [('query_quality', 1, 'runtime', 4)])
-d.process()
+m.dispatch('test', {'query_id': 1, 'last_succeded': 2, 'runtime': 3, 'success': 4})
+m.dispatch('test', {'query_id': 1, 'last_succeded': 22, 'runtime': 9, 'success': 1})
+m.dispatch('test', {'query_id': 2, 'last_succeded': 44, 'runtime': 9, 'success': 1})
+m.dispatch('pyqp_cell_value', ('query_quality', 2, 'runtime', 1))
+m.dispatch('pyqp_cell_list', [('query_quality', 1, 'runtime', 4)])
+m.process()
