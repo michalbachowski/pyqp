@@ -9,13 +9,13 @@ class Dispatcher(object):
     def __init__(self):
         self._mappers = defaultdict(list)
         self._tables = {}
-        self._drawers = {}
+        self._dumpers = {}
 
-    def add_table(self, table, drawer):
+    def add_table(self, table, dumper):
         if table.name in self._tables:
             raise ValueError("duplicate table '{0}' found".format(table.name))
         self._tables[table.name] = table
-        self._drawers[table.name] = drawer
+        self._dumpers[table.name] = dumper
         return self
 
     def add_mapper(self, event_name, mapper):
@@ -37,4 +37,4 @@ class Dispatcher(object):
     def process(self):
         for table in self._tables.values():
             # execute lazy evaluation (generators)
-            [i for i in self._drawers[table.name](table)]
+            [i for i in self._dumpers[table.name](table)]

@@ -66,9 +66,9 @@ configurator = filtered_configurator(list_of_configs(simple_dict_config), \
 
 d = Dispatcher()
 
-for (table, drawer, config) in configurator(tables):
+for (table, dumper, config) in configurator(tables):
     forwardable_tables[table.name] = not config.get('aggregate_locally', True)
-    d.add_table(table, drawer)
+    d.add_table(table, dumper)
 
 
 for (event_name, mapper) in mappers.items():
