@@ -4,7 +4,7 @@ from itertools import chain, imap, cycle
 from collections import defaultdict
 
 
-class Dispatcher(object):
+class Manager(object):
 
     def __init__(self):
         self._mappers = defaultdict(list)
