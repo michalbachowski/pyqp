@@ -49,7 +49,7 @@ class TableForwarder(Abstract):
     >>> sender = lambda event_name, cell: stdout.write((event_name, cell))
     >>> tf = TableForwarder(t, fwd, sender)
     >>> tf.add_value(1, 'a', 11) #doctest: +ELLIPSIS
-    <decorators.TableForwarder object at 0x...>
+    <pyqp.tables.decorators.TableForwarder object at 0x...>
     >>> [map(str, i) for i in t]
     [['11']]
     >>> allow = True
@@ -79,9 +79,9 @@ class TableRenamed(Abstract):
     >>> t = Table('foo', [Column('a'), Column('b')])
     >>> tr = TableRenamed(t, name='bar')
     >>> tr.add_value(1, 'a', 11) #doctest: +ELLIPSIS
-    <decorators.TableRenamed object at 0x...>
+    <pyqp.tables.decorators.TableRenamed object at 0x...>
     >>> tr.add_value(1, 'b', 22) #doctest: +ELLIPSIS
-    <decorators.TableRenamed object at 0x...>
+    <pyqp.tables.decorators.TableRenamed object at 0x...>
     >>> t.columns == tr.columns
     True
     >>> [map(str, i) for i in t] == [map(str, i) for i in tr]
@@ -111,9 +111,9 @@ class TableFilterable(Abstract):
     >>> t = Table('foo', [Column('a'), Column('b')])
     >>> tf = TableFilterable(t, col_filter=lambda c: c == 'a')
     >>> tf.add_value(1, 'a', 11) #doctest: +ELLIPSIS
-    <decorators.TableFilterable object at 0x...>
+    <pyqp.tables.decorators.TableFilterable object at 0x...>
     >>> tf.add_value(1, 'b', 22) #doctest: +ELLIPSIS
-    <decorators.TableFilterable object at 0x...>
+    <pyqp.tables.decorators.TableFilterable object at 0x...>
     >>> map(attrgetter('name'), t.columns)
     ['a', 'b']
     >>> map(attrgetter('name'), tf.columns)
@@ -156,17 +156,17 @@ class TableTimeLimit(Abstract):
     >>> tb = Table('foo', [Column('a')])
     >>> t = TableTimeLimit(tb, 1)
     >>> t.add_value(1, 'a', 11) #doctest: +ELLIPSIS
-    <decorators.TableTimeLimit object at 0x...>
+    <pyqp.tables.decorators.TableTimeLimit object at 0x...>
     >>> t.add_value(2, 'a', 22) #doctest: +ELLIPSIS
-    <decorators.TableTimeLimit object at 0x...>
+    <pyqp.tables.decorators.TableTimeLimit object at 0x...>
     >>> [map(str, i) for i in t]
     [['11'], ['22']]
     >>> t.add_value(3, 'a', 33) #doctest: +ELLIPSIS
-    <decorators.TableTimeLimit object at 0x...>
+    <pyqp.tables.decorators.TableTimeLimit object at 0x...>
     >>> [map(str, i) for i in t]
     [['11'], ['22'], ['33']]
     >>> t.remove_row(3) #doctest: +ELLIPSIS
-    <decorators.TableTimeLimit object at 0x...>
+    <pyqp.tables.decorators.TableTimeLimit object at 0x...>
     >>> [map(str, i) for i in t]
     [['11'], ['22']]
     >>> sleep(2)
