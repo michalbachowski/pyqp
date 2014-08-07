@@ -39,10 +39,7 @@ test-all:
 	tox
 
 coverage:
-	coverage run --source pyqp setup.py test
-	coverage report -m
-	coverage html
-	open htmlcov/index.html
+	nosetests pyqp/ tests/ --with-doctest --with-coverage --cover-tests --cover-inclusive --cover-package=pyqp
 
 docs:
 	rm -f docs/pyqp.rst
