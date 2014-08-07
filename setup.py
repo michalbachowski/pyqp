@@ -3,6 +3,7 @@
 
 import sys
 import os
+from pyqp import __version__
 # monkey patch os.link to force using symlinks
 del os.link
 
@@ -20,7 +21,7 @@ readme = open('README.md').read()
 
 setup(
     name='pyqp',
-    version='0.1.0',
+    version=__version__,
     description='App that aggregates data over time',
     long_description=readme,
     author='y',
