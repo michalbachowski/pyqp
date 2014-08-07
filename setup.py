@@ -17,13 +17,13 @@ if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist upload')
     sys.exit()
 
-readme = open('README.md').read()
+README = open('README.md').read()
 
 setup(
     name='pyqp',
     version=__version__,
     description='App that aggregates data over time',
-    long_description=readme,
+    long_description=README,
     author='y',
     author_email='mbachows@akamai.com',
     url='https://github.com/michalbachowski/pyqp',
