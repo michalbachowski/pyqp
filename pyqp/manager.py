@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from itertools import chain, cycle
 from collections import defaultdict
-#from six.moves import map
+from six.moves import map
 
 
 class Manager(object):
