@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
 
 # version is a human-readable version number.
 __version__ = '0.1.0'
