@@ -58,7 +58,7 @@ def write_to_file(file_name):
     >>> os.path.exists('/tmp/test')
     True
     >>> with open('/tmp/test') as f:
-    ...     print f.read()
+    ...     print(f.read())
     foo
     >>> os.unlink('/tmp/test')
     """

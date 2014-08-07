@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from itertools import chain, imap, cycle
+from itertools import chain, cycle
 from collections import defaultdict
+#from six.moves import map
 
 
 class Manager(object):
@@ -28,7 +29,7 @@ class Manager(object):
         return self
 
     def _get_cells(self, event_name, data):
-        return chain.from_iterable(imap(self._map_event_data, \
+        return chain.from_iterable(map(self._map_event_data, \
                 cycle([event_name]), self._mappers[event_name], cycle([data])))
 
     def _map_event_data(self, event_name, mapper, data):

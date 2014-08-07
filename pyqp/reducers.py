@@ -16,10 +16,6 @@ def last(values):
     Traceback (most recent call last):
     ...
     IndexError: list index out of range
-    >>> last()
-    Traceback (most recent call last):
-    ...
-    TypeError: last() takes exactly 1 argument (0 given)
     """
     return values[-1]
 
@@ -33,10 +29,6 @@ def first(values):
     Traceback (most recent call last):
     ...
     IndexError: list index out of range
-    >>> first()
-    Traceback (most recent call last):
-    ...
-    TypeError: first() takes exactly 1 argument (0 given)
     """
     return values[0]
 
@@ -54,11 +46,6 @@ def nvl(values):
     Traceback (most recent call last):
     ...
     ValueError: Not None value not found
-
-    >>> nvl()
-    Traceback (most recent call last):
-    ...
-    TypeError: nvl() takes exactly 1 argument (0 given)
     """
     for val in values:
         if val is not None:
@@ -71,11 +58,6 @@ def percentile(percent):
 
     >>> percentile(1)    #doctest: +ELLIPSIS
     <function percentile at 0x...>
-
-    >>> percentile()
-    Traceback (most recent call last):
-    ...
-    TypeError: percentile() takes exactly 1 argument (0 given)
 
     >>> percentile(0.25)([1,2,3,4])
     1.75
@@ -141,10 +123,6 @@ except ImportError:
 
         >>> mean([1,2,3])
         2.0
-        >>> mean()
-        Traceback (most recent call last):
-        ...
-        TypeError: mean() takes exactly 1 argument (0 given)
         """
         return sum(values) / len(values)
 
@@ -154,10 +132,5 @@ except ImportError:
 
         >>> mode([1,1,2,3])
         1
-
-        >>> mode()
-        Traceback (most recent call last):
-        ...
-        TypeError: mode() takes exactly 1 argument (0 given)
         """
         return max(set(values), key=values.count)

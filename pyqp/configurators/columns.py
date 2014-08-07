@@ -24,10 +24,10 @@ def column_instance_factory(config):
     False
     >>> c1.name == c.name
     True
-    >>> column_instance_factory('f')
+    >>> column_instance_factory('f') # doctest: +ELLIPSIS
     Traceback (most recent call last):
     ...
-    TypeError: Expected config to be instance of pyqp.column.Column, got <type 'str'>
+    TypeError: Expected config to be instance of pyqp.column.Column, got <... 'str'>
     """
     try:
         config.name
@@ -49,10 +49,10 @@ def callable_factory(config):
     >>> c = callable_factory(p)
     >>> c.name
     'foo'
-    >>> callable_factory('f')
+    >>> callable_factory('f') # doctest: +ELLIPSIS
     Traceback (most recent call last):
     ...
-    TypeError: Expected config to be callable, got <type 'str'>
+    TypeError: Expected config to be callable, got <... 'str'>
     """
     try:
         return config()
@@ -65,10 +65,10 @@ def dict_factory(config):
     >>> c = dict_factory({'name': 'ggg'})
     >>> c.name
     'ggg'
-    >>> dict_factory('f')
+    >>> dict_factory('f') # doctest: +IGNORE_EXCEPTION_DETAIL, +ELLIPSIS
     Traceback (most recent call last):
     ...
-    TypeError: Expected config to be a dict, got <type 'str'>
+    TypeError...
     """
     try:
         return Column(**config)
@@ -81,17 +81,19 @@ def tuple_factory(config):
     >>> c = tuple_factory(('ggg',))
     >>> c.name
     'ggg'
-    >>> tuple_factory('f')
+    >>> tuple_factory('f') # doctest: +ELLIPSIS
     Traceback (most recent call last):
     ...
-    TypeError: Expected config to be a tuple, got <type 'str'>
+    TypeError: Expected config to be a tuple, got <... 'str'>
     """
     try:
         # ensure we work with iterable (list or tuple), not str
         config.__iter__
-        return Column(*config)
+        if not hasattr(config, 'strip'):
+            return Column(*config)
     except (TypeError, AttributeError):
-        raise TypeError('Expected config to be a tuple, got %s' % type(config))
+        pass
+    raise TypeError('Expected config to be a tuple, got %s' % type(config))
 
 def string_factory(config):
     """Creates new instance of Column using given string
@@ -99,16 +101,16 @@ def string_factory(config):
     >>> c = string_factory('ggg')
     >>> c.name
     'ggg'
-    >>> string_factory(['123'])
+    >>> string_factory(['123']) # doctest: +ELLIPSIS
     Traceback (most recent call last):
     ...
-    TypeError: Expected config to be a string, got <type 'list'>
+    TypeError: Expected config to be a string, got <... 'list'>
     """
     try:
         # ensure we work with str
         config.strip
         return Column(config)
-    except (TypeError, AttributeError):
+    except (AttributeError, TypeError):
         raise TypeError('Expected config to be a string, got %s' % type(config))
 
 default_column_factory = lambda *args: list(map(\

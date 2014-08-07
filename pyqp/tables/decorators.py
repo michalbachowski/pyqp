@@ -46,16 +46,16 @@ class TableForwarder(Abstract):
     >>> t = Table('foo', [Column('a')])
     >>> allow = False
     >>> fwd = lambda table_name: allow
-    >>> sender = lambda event_name, cell: stdout.write((event_name, cell))
+    >>> sender = lambda event_name, cell: stdout.write(str((event_name, cell)))
     >>> tf = TableForwarder(t, fwd, sender)
     >>> tf.add_value(1, 'a', 11) #doctest: +ELLIPSIS
     <pyqp.tables.decorators.TableForwarder object at 0x...>
-    >>> [map(str, i) for i in t]
+    >>> [list(map(str, i)) for i in t]
     [['11']]
     >>> allow = True
     >>> x = tf.add_value(2, 'a', 12)
     ('pyqp_cell_value', ('foo', 2, 'a', 12))
-    >>> [map(str, i) for i in t]
+    >>> [list(map(str, i)) for i in t]
     [['11']]
     """
     def __init__(self, base_table, allow_forwarding, sender):
@@ -84,7 +84,7 @@ class TableRenamed(Abstract):
     <pyqp.tables.decorators.TableRenamed object at 0x...>
     >>> t.columns == tr.columns
     True
-    >>> [map(str, i) for i in t] == [map(str, i) for i in tr]
+    >>> [list(map(str, i)) for i in t] == [list(map(str, i)) for i in tr]
     True
     >>> t.name
     'foo'
@@ -114,13 +114,13 @@ class TableFilterable(Abstract):
     <pyqp.tables.decorators.TableFilterable object at 0x...>
     >>> tf.add_value(1, 'b', 22) #doctest: +ELLIPSIS
     <pyqp.tables.decorators.TableFilterable object at 0x...>
-    >>> map(attrgetter('name'), t.columns)
+    >>> list(map(attrgetter('name'), t.columns))
     ['a', 'b']
-    >>> map(attrgetter('name'), tf.columns)
+    >>> list(map(attrgetter('name'), tf.columns))
     ['a']
-    >>> [map(str, i) for i in t]
+    >>> [list(map(str, i)) for i in t]
     [['11', '22']]
-    >>> [map(str, i) for i in tf]
+    >>> [list(map(str, i)) for i in tf]
     [['11']]
     """
 
@@ -159,18 +159,18 @@ class TableTimeLimit(Abstract):
     <pyqp.tables.decorators.TableTimeLimit object at 0x...>
     >>> t.add_value(2, 'a', 22) #doctest: +ELLIPSIS
     <pyqp.tables.decorators.TableTimeLimit object at 0x...>
-    >>> [map(str, i) for i in t]
+    >>> [list(map(str, i)) for i in t]
     [['11'], ['22']]
     >>> t.add_value(3, 'a', 33) #doctest: +ELLIPSIS
     <pyqp.tables.decorators.TableTimeLimit object at 0x...>
-    >>> [map(str, i) for i in t]
+    >>> [list(map(str, i)) for i in t]
     [['11'], ['22'], ['33']]
     >>> t.remove_row(3) #doctest: +ELLIPSIS
     <pyqp.tables.decorators.TableTimeLimit object at 0x...>
-    >>> [map(str, i) for i in t]
+    >>> [list(map(str, i)) for i in t]
     [['11'], ['22']]
     >>> sleep(2)
-    >>> [map(str, i) for i in t]
+    >>> [list(map(str, i)) for i in t]
     []
     """
 
@@ -193,5 +193,5 @@ class TableTimeLimit(Abstract):
 
     def _prune_old_rows(self):
         treshold = time() - self._timeout
-        [self.remove_row(key) for (key, timestamp) \
-                                in self._cache.items() if timestamp <= treshold]
+        list(map(self.remove_row, [key for (key, timestamp) \
+                            in self._cache.items() if timestamp <= treshold]))

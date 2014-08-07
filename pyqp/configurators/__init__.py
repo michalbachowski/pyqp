@@ -25,8 +25,8 @@ def filtered_configurator(base_configurator, filter_func):
 def simple_dict_config(config):
     """Factory method that creates configuration for table from given dictionary
 
-    >>> list(simple_dict_config({'table': 'foo', 'dumper': 'bar'}))
-    [('foo', 'bar', {'table': 'foo', 'dumper': 'bar'})]
+    >>> list(simple_dict_config({'table': 'foo', 'dumper': 'bar'})) == [('foo', 'bar', {'table': 'foo', 'dumper': 'bar'})]
+    True
     >>> list(simple_dict_config({}))
     [(None, None, {})]
     """
@@ -38,8 +38,8 @@ def list_of_configs(base_configurator):
     >>> f = list_of_configs(simple_dict_config)
     >>> f # doctest: +ELLIPSIS
     <function list_of_configs at 0x...>
-    >>> list(f([{'table': 'foo', 'dumper': 'bar'}]))
-    [('foo', 'bar', {'table': 'foo', 'dumper': 'bar'})]
+    >>> list(f([{'table': 'foo', 'dumper': 'bar'}])) == [('foo', 'bar', {'table': 'foo', 'dumper': 'bar'})]
+    True
     """
     @wraps(list_of_configs)
     def _configurator(config):

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from functools import wraps
+from functools import wraps, reduce
 from itertools import chain
 from copy import deepcopy
 
